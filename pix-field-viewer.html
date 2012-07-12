@@ -1,0 +1,14 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <script src="pix-field-viewer.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <canvas id="canvas" style="display:inline-block"></canvas>
+        <div id="controls" style="display:inline-block; vertical-align:top">
+            <input id="zoom" type="range" min="0" max="100" value="10" onchange="refresh()"></input><br>
+            <input id="rotate" type="range" min="-180" max="180" value="0" onchange="refresh()"></input><br>
+        </div>
+        <div id="source"></div>
+    </body>
+</html>
