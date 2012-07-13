@@ -1,5 +1,4 @@
-// All viewer state needed to draw
-
+// All state needed to draw
 var Viewer = function() {
     var _canvas = {},
         _context = {};
@@ -14,21 +13,19 @@ var Viewer = function() {
             rotate : 0
         },
         
-        init : function(canvas, size) {            
+        init : function(canvas, size) { // Grab the canvas and context; resize
             _canvas = canvas;    
             _canvas.width = size;
             _canvas.height = size; 
             _context = _canvas.getContext("2d");
         },
         
-        draw : function() {
-            // Clear to black, move to center, and zoom
+        draw : function() { // Clear to black, move to center, zoom, and draw
             reset_context(_context);
             _context.fillStyle = "black";
             _context.fillRect(0, 0, _canvas.width, _canvas.height);
             _context.translate(_canvas.width / 2, _canvas.height / 2);
             _context.scale(this.transform.zoom, this.transform.zoom);
-            
             render_pix_field(_context, this.data[this.current].pix, this.transform.rotate * Math.PI / 180);            
         }
     };
@@ -36,6 +33,7 @@ var Viewer = function() {
 
 // Reusable JS methods
 
+// Grab json, parse, and call me back. No callback on error.
 function read_json(path, callback) {
     var first = true; // only invoke callback on first response
     var READY = 4;
@@ -50,11 +48,13 @@ function read_json(path, callback) {
     txtFile.send(null);
 }
 
+// Resets a context to the standard transform and clears it.
 function reset_context(context) {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 }
 
+// Draws a pix field at the current position of the context rotated.
 function render_pix_field(context, pix, angle) {
     context.rotate(angle);
     pix.forEach(function(p) {
@@ -69,6 +69,7 @@ function render_pix_field(context, pix, angle) {
 
 // UI entry points
 
+// Pulls values from the UI and redraws
 function refresh() {
     Viewer.transform.zoom = document.getElementById("zoom").value;
     Viewer.transform.rotate = document.getElementById("rotate").value;
@@ -76,9 +77,9 @@ function refresh() {
     Viewer.draw();
 }
 
+// Identifies the context for Viewer and parses data.json
 window.onload = function() {
     Viewer.init(document.getElementById("canvas"), 800);
-    
     read_json("data.json", function(data) {
         Viewer.data = data;
         var select = document.getElementById("pix-field-select");
