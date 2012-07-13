@@ -1,15 +1,8 @@
+// All viewer state needed to draw
 
 var Viewer = function() {
-    // private variables
     var _canvas = {},
-        _context = {},
-        _width = 800,
-        _height = 800;
-    
-    var _reset = function() {
-        _context.setTransform(1, 0, 0, 1, 0, 0);
-        _context.clearRect(0, 0, _width, _height);
-    };
+        _context = {};
 
     return {
         data : {},
@@ -21,19 +14,19 @@ var Viewer = function() {
             rotate : 0
         },
         
-        init : function(canvas) {            
+        init : function(canvas, size) {            
             _canvas = canvas;    
-            canvas.width = _width;
-            canvas.height = _height; 
+            _canvas.width = size;
+            _canvas.height = size; 
             _context = _canvas.getContext("2d");
-            _reset();
         },
         
         draw : function() {
-            _reset();
+            // Clear to black, move to center, and zoom
+            reset_context(_context);
             _context.fillStyle = "black";
-            _context.fillRect(0, 0, _width, _height);
-            _context.translate(_width / 2, _height / 2);
+            _context.fillRect(0, 0, _canvas.width, _canvas.height);
+            _context.translate(_canvas.width / 2, _canvas.height / 2);
             _context.scale(this.transform.zoom, this.transform.zoom);
             
             render_pix_field(_context, this.data[this.current].pix, this.transform.rotate * Math.PI / 180);            
@@ -41,20 +34,25 @@ var Viewer = function() {
     };
 }();
 
-function refresh() {
-    Viewer.transform.zoom = document.getElementById("zoom").value;
-    Viewer.transform.rotate = document.getElementById("rotate").value;
-    Viewer.current = document.getElementById("pix-field-select").value;
-    Viewer.draw();
-}
+// Reusable JS methods
 
-function read(path, callback) {
+function read_json(path, callback) {
+    var first = true; // only invoke callback on first response
+    var READY = 4;
     var txtFile = new XMLHttpRequest();
     txtFile.open("GET", path, true);
     txtFile.onreadystatechange = function() {
-        callback(txtFile.responseText); 
+        if (first && txtFile.readyState == READY) {
+            first = false;
+            callback(JSON.parse(txtFile.responseText));
+        }
     };
     txtFile.send(null);
+}
+
+function reset_context(context) {
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 }
 
 function render_pix_field(context, pix, angle) {
@@ -69,20 +67,27 @@ function render_pix_field(context, pix, angle) {
     });
 }
 
+// UI entry points
+
+function refresh() {
+    Viewer.transform.zoom = document.getElementById("zoom").value;
+    Viewer.transform.rotate = document.getElementById("rotate").value;
+    Viewer.current = document.getElementById("pix-field-select").value;
+    Viewer.draw();
+}
+
 window.onload = function() {
-    Viewer.init(document.getElementById("canvas"));
-    read("data.json", function(text) {
+    Viewer.init(document.getElementById("canvas"), 800);
+    
+    read_json("data.json", function(data) {
+        Viewer.data = data;
         var select = document.getElementById("pix-field-select");
-        if (text && text.length > 0 && select && select.options.length === 0) {
-            var data = JSON.parse(text);
-            Viewer.data = data;
-            for (var prop in data) {
-                if (data[prop].pix) {
-                    select.options[select.options.length] = new Option(prop, prop);
-                }
+        for (var prop in data) {
+            if (data[prop].pix) {
+                select.options[select.options.length] = new Option(prop, prop);
             }
-            select.options[0].selected = true;
-            refresh();
         }
+        select.options[0].selected = true;
+        refresh();
     });
 };
