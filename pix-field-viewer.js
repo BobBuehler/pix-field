@@ -1,32 +1,26 @@
-// All state needed to draw
 var Viewer = function() {
     var _canvas = {},
-        _context = {};
+        _context = {},
+        _data = {};
 
     return {
-        data : {},
-        
-        current : "",
-        
-        transform : {
-            zoom : 10,
-            rotate : 0
-        },
-        
-        init : function(canvas, size) { // Grab the canvas and context; resize
+        // Store the values that only the Viewer should modify
+        init : function(canvas, data, size) {
             _canvas = canvas;    
+            _data = data;
+            _context = _canvas.getContext("2d");
             _canvas.width = size;
             _canvas.height = size; 
-            _context = _canvas.getContext("2d");
         },
         
-        draw : function() { // Clear to black, move to center, zoom, and draw
+        // Clear to black, move to center, zoom, and draw
+        draw : function(name, zoom, rotate) {
             reset_context(_context);
             _context.fillStyle = "black";
             _context.fillRect(0, 0, _canvas.width, _canvas.height);
             _context.translate(_canvas.width / 2, _canvas.height / 2);
-            _context.scale(this.transform.zoom, this.transform.zoom);
-            render_pix_field(_context, this.data[this.current].pix, this.transform.rotate * Math.PI / 180);            
+            _context.scale(zoom, zoom);
+            render_pix_field(_context, _data[name].pix, rotate * Math.PI / 180);            
         }
     };
 }();
@@ -71,17 +65,15 @@ function render_pix_field(context, pix, angle) {
 
 // Pulls values from the UI and redraws
 function refresh() {
-    Viewer.transform.zoom = document.getElementById("zoom").value;
-    Viewer.transform.rotate = document.getElementById("rotate").value;
-    Viewer.current = document.getElementById("pix-field-select").value;
-    Viewer.draw();
+    Viewer.draw(
+        document.getElementById("pix-field-select").value,
+        document.getElementById("zoom").value,
+        document.getElementById("rotate").value);
 }
 
-// Identifies the context for Viewer and parses data.json
 window.onload = function() {
-    Viewer.init(document.getElementById("canvas"), 800);
     read_json("data.json", function(data) {
-        Viewer.data = data;
+        Viewer.init(document.getElementById("canvas"), data, 800);
         var select = document.getElementById("pix-field-select");
         for (var prop in data) {
             if (data[prop].pix) {
