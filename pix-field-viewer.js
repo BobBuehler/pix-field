@@ -12,7 +12,6 @@ var Viewer = function() {
         _mouse_last_position;
 
     return {
-        // Store the values that only the Viewer should modify
         init : function(canvas, data) {
             _canvas = canvas;    
             _data = data;
@@ -46,7 +45,6 @@ var Viewer = function() {
             }
         },
         
-        // Clear to black, move to center, zoom, and draw
         draw : function() {
             pix_field_lib.reset_context(_context);
             _context.fillStyle = "black";
