@@ -1,7 +1,15 @@
 var Viewer = function() {
     var _canvas = {},
         _context = {},
-        _data = {};
+        _data = {},
+        _pix_name = {},
+        _zoom = 10,
+        _zoom_min = 1,
+        _zoom_max = 100,
+        _rotate = 0,
+        _rotate_min = -180,
+        _rotate_max = 180,
+        _mouse_last_position;
 
     return {
         // Store the values that only the Viewer should modify
@@ -11,53 +19,65 @@ var Viewer = function() {
             _context = _canvas.getContext("2d");
         },
         
+        pix_name_change : function(name) {
+            _pix_name = name;
+        },
+        
+        pix_to_string : function() {
+            return pix_field_lib.to_string(_data[_pix_name].pix);
+        },
+        
+        pix_data_change : function(data) {
+            _data[_pix_name].pix = data;
+        },
+        
+        mouse_move : function(position, bnt1_down) {
+            if (bnt1_down) {
+                if (_mouse_last_position) {
+                    _zoom -= position.y - _mouse_last_position.y;
+                    _zoom = Math.max(Math.min(_zoom, _zoom_max), _zoom_min);
+                    _rotate += position.x - _mouse_last_position.x;
+                    _rotate = Math.max(Math.min(_rotate, _rotate_max), _rotate_min);
+                    _mouse_last_position = position;
+                }
+                _mouse_last_position = position;
+            } else {
+                _mouse_last_position = undefined;
+            }
+        },
+        
         // Clear to black, move to center, zoom, and draw
-        draw : function(name, zoom, rotate) {
+        draw : function() {
             pix_field_lib.reset_context(_context);
             _context.fillStyle = "black";
             _context.fillRect(0, 0, _canvas.width, _canvas.height);
             _context.translate(_canvas.width / 2, _canvas.height / 2);
-            _context.scale(zoom, zoom);
-            pix_field_lib.render(_context, _data[name].pix, rotate * Math.PI / 180);            
-        },
-        
-        pix_string : function(name) {
-            return pix_field_lib.to_string(_data[name].pix);
-        },
-        
-        pix_parse : function(name, text) {
-            _data[name].pix = pix_field_lib.parse(text);
+            _context.scale(_zoom, _zoom);
+            pix_field_lib.render(_context, _data[_pix_name].pix, _rotate * Math.PI / 180);            
         }
     };
 }();
 
-// Pulls values from the UI and redraws
-function refresh() {
-    Viewer.draw(
-        document.getElementById("select").value,
-        document.getElementById("zoom").value,
-        document.getElementById("rotate").value);
-}
-
 function change_select() {
-    var name = document.getElementById("select").value;
-    document.getElementById("pix").value = Viewer.pix_string(name);
-    refresh();
+    Viewer.pix_name_change(document.getElementById("select").value);
+    Viewer.draw();
+    document.getElementById("pix").value = Viewer.pix_to_string();
 }
 
 function change_text() {
-    try {
-        Viewer.pix_parse(
-            document.getElementById("select").value,
-            document.getElementById("pix").value);
-        refresh();
-    } catch (err) {
-    }
+    Viewer.pix_data_change(pix_field_lib.parse(document.getElementById("pix").value));
+    Viewer.draw();
+}
+
+function on_mouse_move(ev) {
+    Viewer.mouse_move({x : ev.offsetX, y : ev.offsetY}, ev.which === 1);
+    Viewer.draw();
 }
 
 window.onload = function() {
+    var canvas = document.getElementById("canvas");     
     pix_field_lib.read_json("data.json", function(data) {
-        Viewer.init(document.getElementById("canvas"), data);
+        Viewer.init(canvas, data);
         var select = document.getElementById("select");
         for (var prop in data) {
             if (data[prop].pix) {
@@ -67,4 +87,5 @@ window.onload = function() {
         select.options[0].selected = true;
         change_select();
     });
+    canvas.onmousemove = on_mouse_move;
 };
