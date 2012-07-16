@@ -21,6 +21,19 @@ var pix_field_lib = function() {
             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
         },
         
+        // parses a comma separated list of arrays
+        parse : function(pix_text) {
+            return JSON.parse('{"pix":[' + pix_text + ']}').pix;
+        },
+        
+        to_string : function(pix) {
+            var buf = [];
+            pix.forEach(function(p) {
+                buf[buf.length] = '[' + p[0] + ',' + p[1] + ',"' + p[2] + '"]';
+            });
+            return buf.join(',\n');
+        },
+        
         // Draws a pix field at the current position of the context, rotated.
         render : function(context, pix, angle) {
             context.rotate(angle);
