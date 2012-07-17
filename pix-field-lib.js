@@ -15,6 +15,18 @@ var pix_field_lib = function() {
             txtFile.send(null);
         },
         
+        // Returns a function(callback) for chaining animation frames.
+        animation_frame_requester : function() {
+            return window.requestAnimationFrame || 
+                window.webkitRequestAnimationFrame || 
+                window.mozRequestAnimationFrame || 
+                window.oRequestAnimationFrame || 
+                window.msRequestAnimationFrame ||
+                function(callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+        },
+        
         // Resets a context to the standard transform and clears it.
         reset_context : function(context) {
             context.setTransform(1, 0, 0, 1, 0, 0);
@@ -22,11 +34,11 @@ var pix_field_lib = function() {
         },
         
         // parses a comma separated list of arrays
-        parse : function(pix_text) {
+        parse_pix_array : function(pix_text) {
             return JSON.parse('{"pix":[' + pix_text + ']}').pix;
         },
         
-        to_string : function(pix) {
+        stringify_pix_array : function(pix) {
             var buf = [];
             pix.forEach(function(p) {
                 buf[buf.length] = '[' + p[0] + ',' + p[1] + ',"' + p[2] + '"]';
@@ -35,7 +47,7 @@ var pix_field_lib = function() {
         },
         
         // Draws a pix field at the current position of the context, rotated.
-        render : function(context, pix, angle) {
+        render_pix_array : function(context, pix, angle) {
             context.rotate(angle);
             pix.forEach(function(p) {
                 context.save();

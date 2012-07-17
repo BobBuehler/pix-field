@@ -23,7 +23,7 @@ var Viewer = function() {
         },
         
         pix_to_string : function() {
-            return pix_field_lib.to_string(_data[_pix_name].pix);
+            return pix_field_lib.stringify_pix_array(_data[_pix_name].pix);
         },
         
         pix_data_change : function(data) {
@@ -51,7 +51,7 @@ var Viewer = function() {
             _context.fillRect(0, 0, _canvas.width, _canvas.height);
             _context.translate(_canvas.width / 2, _canvas.height / 2);
             _context.scale(_zoom, _zoom);
-            pix_field_lib.render(_context, _data[_pix_name].pix, _rotate * Math.PI / 180);            
+            pix_field_lib.render_pix_array(_context, _data[_pix_name].pix, _rotate * Math.PI / 180);            
         }
     };
 }();
@@ -63,7 +63,7 @@ function change_select() {
 }
 
 function change_text() {
-    Viewer.pix_data_change(pix_field_lib.parse(document.getElementById("pix").value));
+    Viewer.pix_data_change(pix_field_lib.parse_pix_array(document.getElementById("pix").value));
     Viewer.draw();
 }
 
