@@ -1,8 +1,8 @@
 var Viewer = function() {
-    var _canvas = {},
-        _context = {},
-        _data = {},
-        _pix_name = {},
+    var _canvas,
+        _context,
+        _data,
+        _pix_name,
         _zoom = 10,
         _zoom_min = 1,
         _zoom_max = 100,
