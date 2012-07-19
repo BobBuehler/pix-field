@@ -15,10 +15,10 @@ var Data = {};
 
 var Helicopter = function() {
     var constants = {
-        gravity : 15, // pixels / s
-        thrust : 40, // pixels / s
-        spin : 1.5 * Math.PI, // radians / s
-        drag : 0.1
+        gravity : 2, // pixels / s
+        thrust : 4, // pixels / s
+        spin : 2 * Math.PI, // radians / s
+        drag : 0.01
     };
     var state = {
         position : { x:0, y:0 },
@@ -45,8 +45,8 @@ var Helicopter = function() {
             state.velocity.y += constants.gravity * delta_time;
             state.velocity.x *= 1 - (constants.drag * delta_time);
             state.velocity.y *= 1 - (constants.drag * delta_time);
-            state.position.x += state.velocity.x * delta_time;
-            state.position.y += state.velocity.y * delta_time;
+            state.position.x += state.velocity.x;// * delta_time;
+            state.position.y += state.velocity.y;// * delta_time;
         },
         bound : function(min_x, min_y, max_x, max_y) {
             var x = state.position.x;
