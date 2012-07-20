@@ -15,17 +15,29 @@ var Data = {};
 
 var Helicopter = function() {
     var constants = {
-        gravity : 2, // pixels / s
-        thrust : 4, // pixels / s
-        spin : 2 * Math.PI, // radians / s
-        drag : 0.01
+        radius : 2, // pixels
+        gravity : 1, // pixels / s
+        thrust_max : 2, // pixels / s
+        thrust_delay : .1, // seconds
+        spin_max : 2 * Math.PI, // radians / s
+        spin_delay : .2, //seconds
+        drag : 0.01, // pixels / s
+        blade_spin_min : 1 * Math.PI, // radians / s at no thrust
+        blade_spin_thrust : 5 * Math.PI, // radians / s added at full thrust
+        blade_radius : 6, // pixels
+        prop_spin : 2 * Math.PI // radians / s
     };
     var state = {
         position : { x:0, y:0 },
         angle : 0,
-        velocity : { x:0, y:0 }
+        velocity : { x:0, y:0 },
+        spin : 0,
+        thrust : 0,
+        blades : [[0,0,"#aaa"],[0,0,"#aaa"]],
+        blade_angle : 0,
+        prop_angle : 0
     };
-    
+
     return {
         reset : function(x, y) {
             state.position.x = x;
@@ -34,37 +46,61 @@ var Helicopter = function() {
             state.velocity.x = 0;
             state.velocity.y = 0;
         },
-        thrust : function(delta_time) {
-            state.velocity.x += constants.thrust * Math.sin(state.angle) * delta_time;
-            state.velocity.y += constants.thrust * -Math.cos(state.angle) * delta_time;
-        },
-        spin : function(delta_time) {
-            state.angle += constants.spin * delta_time;
-        },
-        step : function(delta_time) {
+        step : function(delta_time, do_thrust, do_spin_left, do_spin_right) {
+            if(do_thrust) {
+                state.thrust += constants.thrust_max * (delta_time / constants.thrust_delay);
+                state.thrust = Math.min(state.thrust, constants.thrust_max);
+                state.velocity.x += state.thrust * Math.sin(state.angle) * delta_time;
+                state.velocity.y += state.thrust * -Math.cos(state.angle) * delta_time;
+            } else {
+                state.thrust = 0;
+            }
+            if (do_spin_left && !do_spin_right) {
+                state.spin = Math.min(state.spin, 0);
+                state.spin -= constants.spin_max * (delta_time / constants.spin_delay);
+                state.spin = Math.max(state.spin, -constants.spin_max);
+                state.angle += state.spin * delta_time;
+            } else if (do_spin_right && !do_spin_left) {
+                state.spin = Math.max(state.spin, 0);
+                state.spin += constants.spin_max * (delta_time / constants.spin_delay);
+                state.spin = Math.min(state.spin, constants.spin_max);
+                state.angle += state.spin * delta_time;
+            } else {
+                state.spin = 0;
+            }
             state.velocity.y += constants.gravity * delta_time;
             state.velocity.x *= 1 - (constants.drag * delta_time);
             state.velocity.y *= 1 - (constants.drag * delta_time);
-            state.position.x += state.velocity.x;// * delta_time;
-            state.position.y += state.velocity.y;// * delta_time;
+            state.position.x += state.velocity.x;
+            state.position.y += state.velocity.y;
+            state.blade_angle += delta_time * (constants.blade_spin_min + state.thrust / constants.thrust_max * constants.blade_spin_thrust);
+            while (state.blade_angle > Math.TwoPI) {
+              state.blade_angle -= Math.TwoPI;
+            }
+            state.blades[0][0] = Math.sin(state.blade_angle) * constants.blade_radius;
+            state.blades[1][0] = Math.sin(-state.blade_angle) * constants.blade_radius;
+            state.prop_angle += constants.prop_spin * delta_time;
+            while (state.prop_angle > Math.TwoPI) {
+              state.prop_angle -= Math.TwoPI;
+            }
         },
         bound : function(min_x, min_y, max_x, max_y) {
             var x = state.position.x;
-            if (x < min_x) {
-                x = min_x;
+            if (x < min_x + constants.radius) {
+                x = min_x + constants.radius;
                 state.velocity.x = 0;
-            } else if (x > max_x) {
-                x = max_x;
+            } else if (x > max_x - constants.radius) {
+                x = max_x - constants.radius;
                 state.velocity.x = 0;
             }
             state.position.x = x;
-            
+
             var y = state.position.y;
-            if (y < min_y) {
-                y = min_y;
+            if (y < min_y + constants.radius) {
+                y = min_y + constants.radius;
                 state.velocity.y = 0;
-            } else if (y > max_y) {
-                y = max_y;
+            } else if (y > max_y - constants.radius) {
+                y = max_y - constants.radius;
                 state.velocity.y = 0;
             }
             state.position.y = y;
@@ -73,6 +109,16 @@ var Helicopter = function() {
             context.save();
             context.translate(state.position.x, state.position.y);
             pix_field_lib.render_pix_array(context, Data.ship.pix, state.angle);
+            context.save();
+            context.rotate(state.angle);
+            context.translate(-8,0);
+            context.rotate(-state.angle);
+            pix_field_lib.render_pix_array(context, Data.rear_prop.pix, state.prop_angle);// + state.angle);
+            context.restore();
+            context.rotate(state.angle);
+            context.translate(0,-2.9);
+            context.rotate(-state.angle);
+            pix_field_lib.render_pix_array(context, state.blades, state.angle);
             context.restore();
         }
     };
@@ -96,14 +142,8 @@ var Loop = function() {
             var time = new Date().getTime();
             var delta_time = (time - _last_time) / 1000;
             _last_time = time;
-            if (key_state(37)) // left
-                Helicopter.spin(-delta_time);
-            if (key_state(39)) // right
-                Helicopter.spin(delta_time);
-            if (key_state(32)) // space
-                Helicopter.thrust(delta_time);
-            Helicopter.step(delta_time);
-            Helicopter.bound(0, 0, _canvas.width / _zoom, _canvas.height / _zoom);  
+            Helicopter.step(delta_time, key_state(32), key_state(37), key_state(39));
+            Helicopter.bound(0, 0, _canvas.width / _zoom, _canvas.height / _zoom);
             pix_field_lib.reset_context(_context);
             _context.fillStyle = "black";
             _context.fillRect(0, 0, _canvas.width, _canvas.height);
