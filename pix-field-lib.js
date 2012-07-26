@@ -27,13 +27,13 @@ var pix_field_lib = {
   },
 
 
-  // Keep the angle between 0 and 2*PI
+  // Return the angle in the range (-PI,PI]
   bound_angle : function(angle) {
-    while (angle < 0) {
-      angle += Math.TwoPI;
-    }
-    while (angle > Math.TwoPI) {
+    while (angle > Math.PI) {
       angle -= Math.TwoPI;
+    }
+    while (angle <= -Math.PI) {
+      angle += Math.TwoPI;
     }
     return angle;
   },
@@ -65,6 +65,7 @@ var pix_field_lib = {
 
   // Draws a pix field at the current position of the context, rotated.
   render_pix_array : function(context, pix, angle) {
+    context.save();
     context.rotate(angle);
     pix.forEach(function(p) {
       context.save();
@@ -74,8 +75,10 @@ var pix_field_lib = {
       context.fillRect(-0.5, -0.5, 1, 1);
       context.restore();
     });
-    context.rotate(-angle);
+    context.restore();
   }
 };
 
 Math.TwoPI = Math.PI * 2;
+Math.PIOverTwo = Math.PI / 2;
+Math.square = function(x) { return x * x; };

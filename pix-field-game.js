@@ -10,6 +10,7 @@ var KeyBoard = function() {
     SPACE : 32,
     LEFT : 37,
     RIGHT : 39,
+    DOWN : 40,
     get : function(key) {
       return _state[key];
     }
@@ -40,9 +41,11 @@ var Loop = function() {
       var time = new Date().getTime();
       var delta_time = (time - _last_time) / 1000;
       _last_time = time;
-      _lifter.step(delta_time, KeyBoard.get(KeyBoard.SPACE), KeyBoard.get(KeyBoard.LEFT), KeyBoard.get(KeyBoard.RIGHT));
+      _lifter.step(delta_time, KeyBoard.get(KeyBoard.DOWN), KeyBoard.get(KeyBoard.SPACE), KeyBoard.get(KeyBoard.LEFT), KeyBoard.get(KeyBoard.RIGHT));
       _lifter.bound(0, 0, _canvas.width / _zoom, _canvas.height / _zoom);
-      _helicopter.step(delta_time, _lifter.get_thrust_percent());
+      if (!(KeyBoard.get(KeyBoard.DOWN) && _lifter.get_frozen())) {
+        _helicopter.step(delta_time, _lifter.get_thrust_percent());
+      }
       _hover_zone.step(delta_time, _hover_zone.contains(_lifter.get_x(), _lifter.get_y()));
       pix_field_lib.reset_context(_context, "black");
       _context.scale(_zoom, _zoom);
