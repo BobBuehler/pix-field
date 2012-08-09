@@ -26,6 +26,19 @@ var pix_field_lib = {
       };
   },
 
+  // Capture mouse wheel
+  mouse_wheel_event_handler : function(element, handler) {
+    function handler_wrapper(e) {
+      var evt = window.event || e;
+      handler((evt.detail ? evt.detail : evt.wheelDelta) < 0 ? -1 : +1);
+    }
+    var mousewheelevt = (/firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+    if (element.attachEvent) {
+      element.attachEvent("on"+mousewheelevt, handler_wrapper);
+    } else if (element.addEventListener) {
+      element.addEventListener(mousewheelevt, handler_wrapper, false);
+    }
+  },
 
   // Return the angle in the range (-PI,PI]
   bound_angle : function(angle) {
