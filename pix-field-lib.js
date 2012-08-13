@@ -76,20 +76,30 @@ var pix_field_lib = {
     return buf.join(',\n');
   },
 
-  // Draws a pix field at the current position of the context, rotated.
-  render_pix_array : function(context, pix, angle) {
-    context.save();
-    context.rotate(angle);
-    pix.forEach(function(p) {
+  render_pix_field : function() {
+    function recurse(context, pix_field, angle, level) {
+      if (!level) {
+        level = 255; // Max pix field depth
+      }
       context.save();
-      context.translate(p[0], p[1]);
-      context.rotate(-angle);
-      context.fillStyle = p[2];
-      context.fillRect(-0.5, -0.5, 1, 1);
+      context.rotate(angle);
+      pix_field.pix.forEach(function(p) {
+        context.save();
+        context.translate(p[0], p[1]);
+        context.rotate(-angle);
+        if (level > 0 && pix_field[p[2]]) {
+          context.scale(pix_field.scale, pix_field.scale);
+          recurse(context, pix_field[p[2]], level - 1, angle);
+        } else {
+          context.fillStyle = p[2];
+          context.fillRect(-0.5, -0.5, 1, 1);
+        }
+        context.restore();
+      });
       context.restore();
-    });
-    context.restore();
-  }
+    }
+    return recurse;
+  }()
 };
 
 Math.TwoPI = Math.PI * 2;

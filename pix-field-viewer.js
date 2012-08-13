@@ -11,25 +11,6 @@ var Viewer = function() {
     zoom : 50
   };
 
-  function render(context, pix_field, level, angle) {
-    context.save();
-    context.rotate(angle);
-    pix_field.pix.forEach(function(p) {
-      context.save();
-      context.translate(p[0], p[1]);
-      context.rotate(-angle);
-      if (level > 0 && pix_field[p[2]]) {
-        context.scale(pix_field.scale, pix_field.scale);
-        render(context, pix_field[p[2]], level - 1, angle);
-      } else {
-        context.fillStyle = p[2];
-        context.fillRect(-0.5, -0.5, 1, 1);
-      }
-      context.restore();
-    });
-    context.restore();
-  }
-
   return {
     init : function(canvas, data) {
       constants.canvas = canvas;
@@ -70,7 +51,7 @@ var Viewer = function() {
       constants.context.fillRect(0, 0, constants.canvas.width, constants.canvas.height);
       constants.context.translate(state.translate.x, state.translate.y);
       constants.context.scale(state.zoom, state.zoom);
-      render(constants.context, state.data[state.pix_name], 1, 0);
+      pix_field_lib.render_pix_field(constants.context, state.data[state.pix_name], 0, 1);
     }
   };
 }();
