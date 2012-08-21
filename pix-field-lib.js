@@ -26,6 +26,25 @@ var pix_field_lib = {
       };
   },
 
+  key_state_tracker : function(element, key_down_event_name, key_up_event_name) {
+    var _state = {};
+    element[key_down_event_name] = function(ev) {
+      _state[ev.which] = true;
+    };
+    element[key_up_event_name] = function(ev) {
+      _state[ev.which] = false;
+    };
+    return {
+      SPACE : 32,
+      LEFT : 37,
+      RIGHT : 39,
+      DOWN : 40,
+      get : function(key) {
+        return _state[key];
+      }
+    };
+  },
+
   // Capture mouse wheel
   mouse_wheel_event_handler : function(element, handler) {
     function handler_wrapper(e) {
