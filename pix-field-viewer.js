@@ -8,7 +8,7 @@ var Viewer = function() {
     pix_name : "",
     translate : {x:0, y:0},
     mouse_last_position : undefined,
-    zoom : 50
+    zoom : 10
   };
 
   return {
@@ -17,7 +17,7 @@ var Viewer = function() {
       constants.context = constants.canvas.getContext("2d");
       state.data = data;
       state.translate.x = constants.canvas.width / 2;
-      state.translate.y = constants.canvas.height / 2
+      state.translate.y = constants.canvas.height / 2;
     },
 
     pix_name_change : function(name) {
@@ -51,7 +51,7 @@ var Viewer = function() {
       constants.context.fillRect(0, 0, constants.canvas.width, constants.canvas.height);
       constants.context.translate(state.translate.x, state.translate.y);
       constants.context.scale(state.zoom, state.zoom);
-      pix_field_lib.render_pix_field(constants.context, state.data[state.pix_name], 0, 1);
+      pix_field_lib.render_pix_array(constants.context, state.data[state.pix_name], 0);
     }
   };
 }();
@@ -78,9 +78,7 @@ window.onload = function() {
     Viewer.init(canvas, data);
     var select = document.getElementById("select");
     for (var prop in data) {
-      if (data[prop].pix) {
-        select.options[select.options.length] = new Option(prop, prop);
-      }
+      select.options[select.options.length] = new Option(prop, prop);
     }
     select.options[0].selected = true;
     change_select();

@@ -49,17 +49,17 @@ pix_field_lib.create_helicopter_pix = function() {
     draw : function(context, x, y, angle) {
       context.save();
       context.translate(x, y);
-      pix_field_lib.render_pix_field(context, {pix:constants.pix}, angle);
+      pix_field_lib.render_pix_array(context, constants.pix, angle);
       context.save();
       context.rotate(angle);
       context.translate(-8,0);
       context.rotate(-angle);
-      pix_field_lib.render_pix_field(context, {pix:constants.pix_rear_prop}, state.prop_angle);
+      pix_field_lib.render_pix_array(context, constants.pix_rear_prop, state.prop_angle);
       context.restore();
       context.rotate(angle);
       context.translate(0,-2.9);
       context.rotate(-angle);
-      pix_field_lib.render_pix_field(context, {pix:state.blades}, angle);
+      pix_field_lib.render_pix_array(context, state.blades, angle);
       context.restore();
     }
   };

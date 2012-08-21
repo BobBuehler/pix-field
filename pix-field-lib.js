@@ -76,30 +76,19 @@ var pix_field_lib = {
     return buf.join(',\n');
   },
 
-  render_pix_field : function() {
-    function recurse(context, pix_field, angle, level) {
-      if (!level) {
-        level = 255; // Max pix field depth
-      }
+  render_pix_array : function(context, pix_array, angle) {
+    context.save();
+    context.rotate(angle);
+    pix_array.forEach(function(p) {
       context.save();
-      context.rotate(angle);
-      pix_field.pix.forEach(function(p) {
-        context.save();
-        context.translate(p[0], p[1]);
-        context.rotate(-angle);
-        if (level > 0 && pix_field[p[2]]) {
-          context.scale(pix_field.scale, pix_field.scale);
-          recurse(context, pix_field[p[2]], level - 1, angle);
-        } else {
-          context.fillStyle = p[2];
-          context.fillRect(-0.5, -0.5, 1, 1);
-        }
-        context.restore();
-      });
+      context.translate(p[0], p[1]);
+      context.rotate(-angle);
+      context.fillStyle = p[2];
+      context.fillRect(-0.5, -0.5, 1, 1);
       context.restore();
-    }
-    return recurse;
-  }()
+    });
+    context.restore();
+  }
 };
 
 Math.TwoPI = Math.PI * 2;
