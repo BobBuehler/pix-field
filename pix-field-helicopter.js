@@ -1,18 +1,25 @@
 pix_field_lib.create_helicopter_pix = function() {
 
+  var colors = {
+    body : "#888",
+    glass : "#88f",
+    top_prop : "#aaa",
+    rear_prop : "#444"
+  };
+
   // Variables that are not changed during the lifetime of the helicopter
   var constants = {
     pix : [
-      [-8,0,"#888"],
-      [-6,0,"#888"],
-      [-4,0,"#888"],
-      [-2,-1.5,"#888"],
+      [-8,0,colors.body],
+      [-6,0,colors.body],
+      [-4,0,colors.body],
+      [-2,-1.5,colors.body],
       [0,-1.9,"#88f"],
-      [0,-2.9,"#888"],
+      [0,-2.9,colors.body],
       [2,-1.5,"#88f"],
       [3,0.5,"#88f"],
       [2,2.5,"#88f"],
-      [0,2.5,"#888"]],
+      [0,2.5,colors.body]],
     pix_rear_prop : [
       [0,-1,"#444"],
       [0,1,"#444"]],
@@ -47,7 +54,7 @@ pix_field_lib.create_helicopter_pix = function() {
       context.rotate(angle);
       context.translate(-8,0);
       context.rotate(-angle);
-      pix_field_lib.render_pix_array(context, constants.pix_rear_prop, state.prop_angle);// + state.angle);
+      pix_field_lib.render_pix_array(context, constants.pix_rear_prop, state.prop_angle);
       context.restore();
       context.rotate(angle);
       context.translate(0,-2.9);
