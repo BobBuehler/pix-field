@@ -22,6 +22,9 @@ pix_field_lib.create_hover_zone = function(x, y) {
 
   // public interface
   return {
+    is_complete : function() {
+      return state.progress === 1;
+    },
     contains : function(x, y) {
       return (x > constants.x - constants.radius) &&
         (x < constants.x + constants.radius) &&

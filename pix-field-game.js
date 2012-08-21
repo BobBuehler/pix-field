@@ -27,12 +27,14 @@ var pix_field_loop = function() {
       if (!(_keyboard_state.get(DOWN) && _lifter.get_frozen())) {
         _helicopter.step(delta_time, _lifter.get_thrust_percent());
       }
+      if (_hover_zone.is_complete()) {
+        _hover_zone = pix_field_lib.create_hover_zone(Math.random() * _canvas.width / _zoom, Math.random() * _canvas.height / _zoom);
+      }
       _hover_zone.step(delta_time, _hover_zone.contains(_lifter.get_x(), _lifter.get_y()));
       pix_field_lib.reset_context(_context, "black");
       _context.scale(_zoom, _zoom);
       _hover_zone.draw(_context);
       _helicopter.draw(_context, _lifter.get_x(), _lifter.get_y(), _lifter.get_angle());
-      document.getElementById("fps").innerHTML = "fps: " + (1 / delta_time);
       _request_animation_frame(function() {
         pix_field_loop.iterate();
       });
