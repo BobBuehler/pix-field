@@ -26,12 +26,12 @@ var pix_field_lib = {
       };
   },
 
-  key_state_tracker : function(element, key_down_event_name, key_up_event_name) {
+  key_state_tracker : function() {
     var _state = {};
-    element[key_down_event_name] = function(ev) {
+    document.onkeydown = function(ev) {
       _state[ev.which] = true;
     };
-    element[key_up_event_name] = function(ev) {
+    document.onkeyup = function(ev) {
       _state[ev.which] = false;
     };
     return {
