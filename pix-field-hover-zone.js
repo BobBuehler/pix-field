@@ -1,3 +1,6 @@
+// A square progress that can draw itself.
+// Dependent on pix-field-lib.js
+
 pix_field_lib.create_hover_zone = function(x, y) {
   var constants = {
     x : x,
@@ -6,7 +9,7 @@ pix_field_lib.create_hover_zone = function(x, y) {
     radius_inner : 5, // pixels from center to edge
     color : "#050",
     color_inner : "#070",
-    progress_rate : 0.2, // percent per second
+    progress_rate : 0.5, // percent per second
     decay_rate : 0.5 // percent per second
   };
 
@@ -32,7 +35,9 @@ pix_field_lib.create_hover_zone = function(x, y) {
         (y < constants.y + constants.radius);
     },
     step : function(delta_time, do_progress) {
-      if (do_progress) {
+      if (state.progress === 1) {
+        return;
+      } else if (do_progress) {
         state.progress += delta_time * constants.progress_rate;
         if (state.progress > 1) {
           state.progress = 1;

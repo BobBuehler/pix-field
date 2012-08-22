@@ -1,20 +1,9 @@
-var pix_field_lib = {
-  // Grab json, parse, and call me back. No callback on error.
-  read_json : function(path, callback) {
-    var first = true; // only invoke callback on first response
-    var READY = 4;
-    var txtFile = new XMLHttpRequest();
-    txtFile.open("GET", path, true);
-    txtFile.onreadystatechange = function() {
-      if (first && txtFile.readyState == READY) {
-        first = false;
-        callback(JSON.parse(txtFile.responseText));
-      }
-    };
-    txtFile.send(null);
-  },
+// A collection of common utility methods.
+// No dependencies on other scripts
 
+var pix_field_lib = {
   // Returns a function(callback) for chaining animation frames.
+  // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
   animation_frame_requester : function() {
     return window.requestAnimationFrame ||
       window.webkitRequestAnimationFrame ||
@@ -26,6 +15,8 @@ var pix_field_lib = {
       };
   },
 
+  // Hooks into the document's onkeydown and onkeyup events.
+  // Returns an object get(keycode) returns true if the key is pressed and falsy otherwise.
   key_state_tracker : function() {
     var _state = {};
     document.onkeydown = function(ev) {
@@ -35,28 +26,10 @@ var pix_field_lib = {
       _state[ev.which] = false;
     };
     return {
-      SPACE : 32,
-      LEFT : 37,
-      RIGHT : 39,
-      DOWN : 40,
       get : function(key) {
         return _state[key];
       }
     };
-  },
-
-  // Capture mouse wheel
-  mouse_wheel_event_handler : function(element, handler) {
-    function handler_wrapper(e) {
-      var evt = window.event || e;
-      handler((evt.detail ? evt.detail : evt.wheelDelta) < 0 ? -1 : +1);
-    }
-    var mousewheelevt = (/firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
-    if (element.attachEvent) {
-      element.attachEvent("on"+mousewheelevt, handler_wrapper);
-    } else if (element.addEventListener) {
-      element.addEventListener(mousewheelevt, handler_wrapper, false);
-    }
   },
 
   // Return the angle in the range (-PI,PI]
@@ -81,20 +54,9 @@ var pix_field_lib = {
     }
   },
 
-  // parses a comma separated list of arrays
-  parse_pix_array : function(pix_text) {
-    return JSON.parse('{"pix":[' + pix_text + ']}').pix;
-  },
-
-  // returns repeating [x,y,"color"],
-  stringify_pix_array : function(pix) {
-    var buf = [];
-    pix.forEach(function(p) {
-      buf[buf.length] = '[' + p[0] + ',' + p[1] + ',"' + p[2] + '"]';
-    });
-    return buf.join(',\n');
-  },
-
+  // Draws an array of pix to the context at the given angle.
+  // A pix is an array of three elements [x, y, fillstyle].
+  // Each pix is rendered as a square of size 1 centered at the given x and y.
   render_pix_array : function(context, pix_array, angle) {
     context.save();
     context.rotate(angle);
@@ -112,4 +74,3 @@ var pix_field_lib = {
 
 Math.TwoPI = Math.PI * 2;
 Math.PIOverTwo = Math.PI / 2;
-Math.square = function(x) { return x * x; };
