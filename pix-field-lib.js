@@ -69,6 +69,16 @@ var pix_field_lib = {
       context.restore();
     });
     context.restore();
+  },
+
+  render_progress_square : function(context, x, y, radius, background_color, progress_color, progress) {
+    var diameter = radius * 2;
+    context.fillStyle = background_color;
+    context.fillRect(x - radius, y - radius, diameter, diameter);
+    var inner_diameter = (radius + radius * progress);
+    var inner_radius = inner_diameter / 2;
+    context.fillStyle = progress_color;
+    context.fillRect(x - inner_radius, y - inner_radius, inner_diameter, inner_diameter);
   }
 };
 
