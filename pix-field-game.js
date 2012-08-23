@@ -3,29 +3,24 @@
 
 var CANVAS = {width:1000, height:800, zoom:5};
 var KEYS = {space:32, left:37, right:39};
-var HOVER = {delay:3, decay:1, radius:15, background_color:"#050", progress_color:"#070"};
 
 var pix_field_game = function(width, height) {
   var _lifter = pix_field_lib.create_lifter(width / 2, height / 2),
       _helicopter = pix_field_lib.create_helicopter_pix(),
-      _hover_square = pix_field_lib.create_square(width / 3, height / 3, HOVER.radius),
-      _hover_activator = pix_field_lib.create_activator(HOVER.delay, HOVER.decay,
-          function(activator) {
-            activator.reset();
-            _hover_square.x = Math.random() * width;
-            _hover_square.y = Math.random() * height;
-          });
+      _hover_square = pix_field_lib.create_hover_square(width / 3, height / 3),
+      _progress_square = pix_field_lib.create_progress_square()
   return {
     step : function(delta_time, keyboard) {
       _lifter.step(delta_time, keyboard.get(KEYS.space), keyboard.get(KEYS.left), keyboard.get(KEYS.right));
       _lifter.bound(0, 0, width, height);
       _helicopter.step(delta_time, _lifter.get_thrust_percent());
-      _hover_activator.step(delta_time, _hover_square.contains(_lifter.get_x(), _lifter.get_y()));
+      _hover_square.step(delta_time, _lifter.get_x(), _lifter.get_y());
+      if (_hover_square.get_progress() === 1) {
+        _hover_square = pix_field_lib.create_hover_square(width * Math.random(), height * Math.random())
+      }
     },
     draw : function(context) {
-      pix_field_lib.render_progress_square(context,
-          _hover_square.x, _hover_square.y, _hover_square.radius,
-          HOVER.background_color, HOVER.progress_color, _hover_activator.get_progress());
+      _progress_square.draw(context, _hover_square.get_x(), _hover_square.get_y(), _hover_square.get_radius(), _hover_square.get_progress());
       _helicopter.draw(context, _lifter.get_x(), _lifter.get_y(), _lifter.get_angle());
     }
   };
