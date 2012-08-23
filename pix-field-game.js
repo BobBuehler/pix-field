@@ -1,22 +1,20 @@
-// An animation and game loop that maintains the game model and renders to a context
+// A game model that renders to a context
 // Dependent on pix-field-lib.js, pix-field-lifter.js, pix-field-helicopter.js, and pix-field-hover-zone.js
+if (!pix_field) { var pix_field = {}; }
 
-var CANVAS = {width:1000, height:800, zoom:5};
-var KEYS = {space:32, left:37, right:39};
-
-var pix_field_game = function(width, height) {
-  var _lifter = pix_field_lib.create_lifter(width / 2, height / 2),
-      _helicopter = pix_field_lib.create_helicopter_pix(),
-      _hover_square = pix_field_lib.create_hover_square(width / 3, height / 3),
-      _progress_square = pix_field_lib.create_progress_square()
+pix_field.create_game = function(width, height) {
+  var _lifter = pix_field.create_lifter(width / 2, height / 2),
+      _helicopter = pix_field.create_helicopter_pix(),
+      _hover_square = pix_field.create_hover_square(width / 3, height / 3),
+      _progress_square = pix_field.create_progress_square()
   return {
-    step : function(delta_time, keyboard) {
-      _lifter.step(delta_time, keyboard.get(KEYS.space), keyboard.get(KEYS.left), keyboard.get(KEYS.right));
+    step : function(delta_time, space_bar, left, right) {
+      _lifter.step(delta_time, space_bar, left, right);
       _lifter.bound(0, 0, width, height);
       _helicopter.step(delta_time, _lifter.get_thrust_percent());
       _hover_square.step(delta_time, _lifter.get_x(), _lifter.get_y());
       if (_hover_square.get_progress() === 1) {
-        _hover_square = pix_field_lib.create_hover_square(width * Math.random(), height * Math.random())
+        _hover_square = pix_field.create_hover_square(width * Math.random(), height * Math.random())
       }
     },
     draw : function(context) {
@@ -24,27 +22,4 @@ var pix_field_game = function(width, height) {
       _helicopter.draw(context, _lifter.get_x(), _lifter.get_y(), _lifter.get_angle());
     }
   };
-};
-
-window.onload = function() {
-  var canvas = document.getElementById("canvas");
-  canvas.width = CANVAS.width;
-  canvas.height = CANVAS.height;
-  var context = canvas.getContext("2d"),
-      keyboard = pix_field_lib.key_state_tracker(),
-      next_frame = pix_field_lib.animation_frame_requester(),
-      game = pix_field_game(canvas.width / CANVAS.zoom, canvas.height / CANVAS.zoom),
-      last_time = new Date().getTime();
-  (function iterate() {
-    next_frame(function() {
-      iterate();
-    });
-    var time = new Date().getTime();
-    var delta_time = (time - last_time) / 1000;
-    game.step(delta_time, keyboard);
-    last_time = time;
-    pix_field_lib.reset_context(context, "black");
-    context.scale(CANVAS.zoom, CANVAS.zoom);
-    game.draw(context);
-  })();
 };
