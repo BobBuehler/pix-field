@@ -1,4 +1,6 @@
-pix_field_lib.create_progress_square = function() {
+if (!pix_field) { var pix_field = {}; }
+
+pix_field.create_progress_square = function() {
   var constants = {
     min_inner_radius : 0.5, // percent of outer radius
     outer_square_color : "#050",

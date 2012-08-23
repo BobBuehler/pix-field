@@ -1,4 +1,6 @@
-pix_field_lib.create_hover_square = function(x, y) {
+if (!pix_field) { var pix_field = {}; }
+
+pix_field.create_hover_square = function(x, y) {
   var constants = {
     x : x,
     y : y,

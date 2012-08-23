@@ -1,7 +1,8 @@
 // A graphic that animates and can draw itself.
 // Dependent on pix-field-lib.js
+if (!pix_field) { var pix_field = {}; }
 
-pix_field_lib.create_helicopter_pix = function() {
+pix_field.create_helicopter_pix = function() {
 
   var colors = {
     body : "#888",

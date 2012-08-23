@@ -1,7 +1,8 @@
 // An entity that can spin and thrust.
 // Dependent on pix-field-lib.js
+if (!pix_field) { var pix_field = {}; }
 
-pix_field_lib.create_lifter = function(x, y) {
+pix_field.create_lifter = function(x, y) {
 
   // Variables that are not changed during the lifetime of the lifter
   var constants = {

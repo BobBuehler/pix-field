@@ -69,6 +69,24 @@ var pix_field_lib = {
       context.restore();
     });
     context.restore();
+  },
+
+  do_canvas_game_loop : function(canvas, zoom, game_step, game_draw) {
+    var context = canvas.getContext("2d"),
+        next_frame = pix_field_lib.animation_frame_requester(),
+        last_time = new Date().getTime();
+    (function iterate() {
+      next_frame(function() {
+        iterate();
+      });
+      var time = new Date().getTime();
+      var delta_time = (time - last_time) / 1000;
+      game_step(delta_time);
+      last_time = time;
+      pix_field_lib.reset_context(context, "black");
+      context.scale(zoom, zoom);
+      game_draw(context);
+    })();
   }
 };
 
