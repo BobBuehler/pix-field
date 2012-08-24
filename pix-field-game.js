@@ -6,7 +6,7 @@ pix_field.create_game = function(width, height) {
   var _lifter = pix_field.create_lifter(width / 2, height / 2),
       _helicopter = pix_field.create_helicopter(),
       _hover_square = pix_field.create_hover_square(width / 3, height / 3),
-      _progress_square = pix_field.create_progress_square()
+      _progress_square = pix_field.create_progress_square();
   return {
     step : function(delta_time, space_bar, left, right) {
       _lifter.step(delta_time, space_bar, left, right);
@@ -14,7 +14,7 @@ pix_field.create_game = function(width, height) {
       _helicopter.step(delta_time, space_bar);
       _hover_square.step(delta_time, _lifter.get_x(), _lifter.get_y());
       if (_hover_square.get_progress() === 1) {
-        _hover_square = pix_field.create_hover_square(width * Math.random(), height * Math.random())
+        _hover_square = pix_field.create_hover_square(width * Math.random(), height * Math.random());
       }
     },
     draw : function(context) {
