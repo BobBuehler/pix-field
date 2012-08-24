@@ -2,6 +2,23 @@
 // No dependencies on other scripts
 
 var pix_field_lib = {
+  // Return the angle in the range (-PI,PI]
+  bound_angle : function(angle) {
+    while (angle > Math.PI) {
+      angle -= Math.TwoPI;
+    }
+    while (angle <= -Math.PI) {
+      angle += Math.TwoPI;
+    }
+    return angle;
+  },
+
+  // Returns the value a percent of the way inbetween a and b.
+  // percent = 0 returns a; 1 returns b.
+  percent_between : function(a, b, percent) {
+    return a + (b - a) * percent;
+  },
+
   // Returns a function(callback) for chaining animation frames.
   // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
   animation_frame_requester : function() {
@@ -30,17 +47,6 @@ var pix_field_lib = {
         return _state[key];
       }
     };
-  },
-
-  // Return the angle in the range (-PI,PI]
-  bound_angle : function(angle) {
-    while (angle > Math.PI) {
-      angle -= Math.TwoPI;
-    }
-    while (angle <= -Math.PI) {
-      angle += Math.TwoPI;
-    }
-    return angle;
   },
 
   // Resets a context to the standard transform and clears it.

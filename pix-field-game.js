@@ -4,14 +4,14 @@ if (!pix_field) { var pix_field = {}; }
 
 pix_field.create_game = function(width, height) {
   var _lifter = pix_field.create_lifter(width / 2, height / 2),
-      _helicopter = pix_field.create_helicopter_pix(),
+      _helicopter = pix_field.create_helicopter(),
       _hover_square = pix_field.create_hover_square(width / 3, height / 3),
       _progress_square = pix_field.create_progress_square()
   return {
     step : function(delta_time, space_bar, left, right) {
       _lifter.step(delta_time, space_bar, left, right);
       _lifter.bound(0, 0, width, height);
-      _helicopter.step(delta_time, _lifter.get_thrust_percent());
+      _helicopter.step(delta_time, space_bar);
       _hover_square.step(delta_time, _lifter.get_x(), _lifter.get_y());
       if (_hover_square.get_progress() === 1) {
         _hover_square = pix_field.create_hover_square(width * Math.random(), height * Math.random())
