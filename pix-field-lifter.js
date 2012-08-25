@@ -1,7 +1,6 @@
 if (!pix_field) { var pix_field = {}; }
 
 // An entity that can spin and thrust.
-// Dependent on pix-field-lib.js
 pix_field.create_lifter = function(x, y) {
   var constants = {
     gravity : 60, // pixels / s / s
@@ -16,7 +15,7 @@ pix_field.create_lifter = function(x, y) {
     angle : 0, // radians ccw of north
     spin : 0 // radians / s
   };
-  var apply_spin_to_angle = function(delta_time, do_spin_left, do_spin_right) {
+  var do_spin = function(delta_time, do_spin_left, do_spin_right) {
     if (do_spin_left && !do_spin_right) {
       state.spin = Math.min(state.spin, 0);
       state.spin -= constants.spin_max * (delta_time / constants.spin_delay);
@@ -32,17 +31,13 @@ pix_field.create_lifter = function(x, y) {
     state.angle += state.spin * delta_time;
     state.angle = pix_field_lib.bound_angle(state.angle);
   };
-  var apply_thrust_to_velocity = function(delta_time, do_thrust) {
+  var do_thrust_and_gravity = function(delta_time, do_thrust) {
     if (do_thrust) {
       var thrust_angle = state.angle - Math.PIOverTwo;
       state.velocity.x += constants.thrust * Math.cos(thrust_angle) * delta_time;
       state.velocity.y += constants.thrust * Math.sin(thrust_angle) * delta_time;
     }
-  };
-  var apply_gravity_to_velocity = function(delta_time) {
-      state.velocity.y += constants.gravity * delta_time;
-  };
-  var apply_velocity_to_xy = function(delta_time) {
+    state.velocity.y += constants.gravity * delta_time;
     state.x += state.velocity.x * delta_time;
     state.y += state.velocity.y * delta_time;
   };
@@ -50,12 +45,12 @@ pix_field.create_lifter = function(x, y) {
     get_x : function() { return state.x; },
     get_y : function() { return state.y; },
     get_angle : function() { return state.angle; },
+    // Update the lifter based on thrust, spin, and gravity
     step : function(delta_time, do_thrust, do_spin_left, do_spin_right) {
-      apply_spin_to_angle(delta_time, do_spin_left, do_spin_right);
-      apply_thrust_to_velocity(delta_time, do_thrust);
-      apply_gravity_to_velocity(delta_time);
-      apply_velocity_to_xy(delta_time);
+      do_spin(delta_time, do_spin_left, do_spin_right);
+      do_thrust_and_gravity(delta_time, do_thrust);
     },
+    // Keep the lifter within a boundary
     bound : function(min_x, min_y, max_x, max_y) {
       if (state.x < min_x) {
         state.x = min_x;

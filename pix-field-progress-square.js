@@ -1,10 +1,11 @@
 if (!pix_field) { var pix_field = {}; }
 
+// A square graphic that draws an inner square and changing size to show progress.
 pix_field.create_progress_square = function() {
   var constants = {
     min_inner_radius : 0.3, // percent of outer radius
-    outer_square_color : "#050",
-    inner_square_color : "#070"
+    outer_square_color : '#050',
+    inner_square_color : '#070'
   };
   return {
     draw : function(context, x, y, radius, progress) {

@@ -1,6 +1,3 @@
-// A collection of common utility methods.
-// No dependencies on other scripts
-
 var pix_field_lib = {
   // Return the angle in the range (-PI,PI]
   bound_angle : function(angle) {

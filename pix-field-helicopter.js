@@ -1,13 +1,12 @@
 if (!pix_field) { var pix_field = {}; }
 
 // A helicopter graphic that animates and can draw itself.
-// Dependent on pix-field-lib.js
 pix_field.create_helicopter = function() {
   var colors = {
-    body : "#888",
-    glass : "#88f",
-    blade : "#aaa",
-    prop : "#444"
+    body : '#888',
+    glass : '#88f',
+    blade : '#aaa',
+    prop : '#444'
   };
   var constants = {
     body_pix : [
@@ -40,6 +39,7 @@ pix_field.create_helicopter = function() {
     prop_angle : 0 // radians
   };
   return {
+    // Move the propellers
     step : function(delta_time, is_thrusting) {
       state.blade_angle += delta_time * (is_thrusting ? constants.blade_spin_thrust : constants.blade_spin_idle);
       state.blade_angle = pix_field_lib.bound_angle(state.blade_angle);
@@ -48,6 +48,7 @@ pix_field.create_helicopter = function() {
       state.prop_angle += constants.prop_spin * delta_time;
       state.prop_angle = pix_field_lib.bound_angle(state.prop_angle);
     },
+    // Draw the helicopter to the context
     draw : function(context, x, y, angle) {
       context.save();
       context.translate(x, y);
