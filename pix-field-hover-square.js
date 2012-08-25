@@ -1,5 +1,6 @@
 if (!pix_field) { var pix_field = {}; }
 
+// A square area that progresses while hovered over
 pix_field.create_hover_square = function(x, y) {
   var constants = {
     x : x,
@@ -27,6 +28,7 @@ pix_field.create_hover_square = function(x, y) {
     get_y : function() { return constants.y; },
     get_radius : function() { return constants.radius; },
     get_progress : function() { return state.progress; },
+    // Update the progress dependent on if the hoverer is within
     step : function(delta_time, x, y) {
       if (contains(x, y)) {
         state.progress += delta_time * calculated.progress_rate;
