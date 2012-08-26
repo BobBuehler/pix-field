@@ -1,15 +1,25 @@
 if (!pix_field) { var pix_field = {}; }
 
 // A helicopter graphic that animates and can draw itself.
-pix_field.create_helicopter = function() {
+pix_field.create_helicopter = function(x, y) {
+  var constants = {
+    gravity : 60, // pixels / s / s
+    thrust : 120, // pixels / s / s
+    spin_max : 2 * Math.PI, // radians / s
+    spin_delay : 0.2, //seconds
+    blade_spin_idle : 1 * Math.PI, // radians / s
+    blade_spin_thrust : 6 * Math.PI, // radians / s
+    blade_radius : 6, // pixels
+    prop_spin : 2 * Math.PI // radians / s
+  };
   var colors = {
     body : '#888',
     glass : '#88f',
     blade : '#aaa',
     prop : '#444'
   };
-  var constants = {
-    body_pix : [
+  var pix = {
+    body : [
       [-8,0,colors.body],
       [-6,0,colors.body],
       [-4,0,colors.body],
@@ -21,49 +31,105 @@ pix_field.create_helicopter = function() {
       [2,2.5,colors.glass],
       [0,2.5,colors.body]
     ],
-    prop_pix : [
-      [0,-1,colors.prop],
-      [0,1,colors.prop]
-    ],
-    blade_spin_idle : 1 * Math.PI, // radians / s
-    blade_spin_thrust : 6 * Math.PI, // radians / s
-    blade_radius : 6, // pixels
-    prop_spin : 2 * Math.PI // radians / s
-  };
-  var state = {
-    blade_pix : [
+    blades : [
       [0,0,colors.blade],
       [0,0,colors.blade]
     ],
+    prop : [
+      [0,-1,colors.prop],
+      [0,1,colors.prop]
+    ]
+  };
+  var state = {
+    x : x, // pixels
+    y : y, // pixels
+    velocity : { x : 0, y : 0 }, // pixels / s
+    angle : 0, // radians ccw of north
+    spin : 0, // radians / s
     blade_angle : 0, // radians
     prop_angle : 0 // radians
   };
-  return {
-    // Move the propellers
-    step : function(delta_time, is_thrusting) {
+  var apply_spin = function(delta_time, do_spin_left, do_spin_right) {
+    if (do_spin_left && !do_spin_right) {
+      state.spin = Math.min(state.spin, 0);
+      state.spin -= constants.spin_max * (delta_time / constants.spin_delay);
+      state.spin = Math.max(state.spin, -constants.spin_max);
+    } else if (do_spin_right && !do_spin_left) {
+      state.spin = Math.max(state.spin, 0);
+      state.spin += constants.spin_max * (delta_time / constants.spin_delay);
+      state.spin = Math.min(state.spin, constants.spin_max);
+    } else {
+      state.spin = 0;
+      return;
+    }
+    state.angle += state.spin * delta_time;
+    state.angle = pix_field_lib.bound_angle(state.angle);
+  };
+  var apply_thrust_and_gravity = function(delta_time, do_thrust) {
+    if (do_thrust) {
+      var thrust_angle = state.angle - Math.PIOverTwo;
+      state.velocity.x += constants.thrust * Math.cos(thrust_angle) * delta_time;
+      state.velocity.y += constants.thrust * Math.sin(thrust_angle) * delta_time;
+    }
+    state.velocity.y += constants.gravity * delta_time;
+    state.x += state.velocity.x * delta_time;
+    state.y += state.velocity.y * delta_time;
+  };
+  var animate_blades = function(delta_time, is_thrusting) {
       state.blade_angle += delta_time * (is_thrusting ? constants.blade_spin_thrust : constants.blade_spin_idle);
       state.blade_angle = pix_field_lib.bound_angle(state.blade_angle);
-      state.blade_pix[0][0] = Math.sin(state.blade_angle) * constants.blade_radius;
-      state.blade_pix[1][0] = Math.sin(-state.blade_angle) * constants.blade_radius;
+      pix.blades[0][0] = Math.sin(state.blade_angle) * constants.blade_radius;
+      pix.blades[1][0] = Math.sin(-state.blade_angle) * constants.blade_radius;
+  };
+  var animate_prop = function(delta_time) {
       state.prop_angle += constants.prop_spin * delta_time;
       state.prop_angle = pix_field_lib.bound_angle(state.prop_angle);
+  };
+  return {
+    get_x : function() { return state.x; },
+    get_y : function() { return state.y; },
+    // Move the helicopter and animate its propellers
+    step : function(delta_time, do_thrust, do_spin_left, do_spin_right) {
+      apply_spin(delta_time, do_spin_left, do_spin_right);
+      apply_thrust_and_gravity(delta_time, do_thrust);
+      animate_blades(delta_time, do_thrust);
+      animate_prop(delta_time);
     },
     // Draw the helicopter to the context
-    draw : function(context, x, y, angle) {
+    draw : function(context) {
       context.save();
-      context.translate(x, y);
-      pix_field_lib.render_pix_array(context, constants.body_pix, angle);
+      context.translate(state.x, state.y);
+      pix_field_lib.render_pix_array(context, pix.body, state.angle);
       context.save();
-      context.rotate(angle);
+      context.rotate(state.angle);
       context.translate(-8,0);
-      context.rotate(-angle);
-      pix_field_lib.render_pix_array(context, constants.prop_pix, state.prop_angle);
+      context.rotate(-state.angle);
+      pix_field_lib.render_pix_array(context, pix.prop, state.prop_angle);
       context.restore();
-      context.rotate(angle);
+      context.rotate(state.angle);
       context.translate(0,-2.9);
-      context.rotate(-angle);
-      pix_field_lib.render_pix_array(context, state.blade_pix, angle);
+      context.rotate(-state.angle);
+      pix_field_lib.render_pix_array(context, pix.blades, state.angle);
       context.restore();
+    },
+    // Keep the helicopter within a boundary
+    bound : function(min_x, min_y, max_x, max_y) {
+      if (state.x < min_x) {
+        state.x = min_x;
+        state.velocity.x = 0;
+      }
+      if (state.y < min_y) {
+        state.y = min_y;
+        state.velocity.y = 0;
+      }
+      if (state.x > max_x) {
+        state.x = max_x;
+        state.velocity.x = 0;
+      }
+      if (state.y > max_y) {
+        state.y = max_y;
+        state.velocity.y = 0;
+      }
     }
   };
 };
