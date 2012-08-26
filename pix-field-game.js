@@ -3,8 +3,7 @@ if (!pix_field) { var pix_field = {}; }
 // Model of a game storing state and drawing objects
 pix_field.create_game = function(width, height) {
   var _helicopter = pix_field.create_helicopter(width / 2, height / 2),
-      _hover_square = pix_field.create_hover_square(width / 3, height / 3),
-      _progress_square = pix_field.create_progress_square();
+      _hover_square = pix_field.create_hover_square(width / 3, height / 3);
   return {
     // Move the game state forward by a period of time
     step : function(delta_time, space_bar, left, right) {

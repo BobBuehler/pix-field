@@ -1,6 +1,6 @@
 if (!pix_field) { var pix_field = {}; }
 
-// A helicopter graphic that animates and can draw itself.
+// An animated helicopter that can spin and thrust
 pix_field.create_helicopter = function(x, y) {
   var constants = {
     gravity : 60, // pixels / s / s
@@ -75,13 +75,11 @@ pix_field.create_helicopter = function(x, y) {
     state.x += state.velocity.x * delta_time;
     state.y += state.velocity.y * delta_time;
   };
-  var animate_blades = function(delta_time, is_thrusting) {
+  var animate = function(delta_time, is_thrusting) {
       state.blade_angle += delta_time * (is_thrusting ? constants.blade_spin_thrust : constants.blade_spin_idle);
       state.blade_angle = pix_field_lib.bound_angle(state.blade_angle);
       pix.blades[0][0] = Math.sin(state.blade_angle) * constants.blade_radius;
       pix.blades[1][0] = Math.sin(-state.blade_angle) * constants.blade_radius;
-  };
-  var animate_prop = function(delta_time) {
       state.prop_angle += constants.prop_spin * delta_time;
       state.prop_angle = pix_field_lib.bound_angle(state.prop_angle);
   };
@@ -92,8 +90,7 @@ pix_field.create_helicopter = function(x, y) {
     step : function(delta_time, do_thrust, do_spin_left, do_spin_right) {
       apply_spin(delta_time, do_spin_left, do_spin_right);
       apply_thrust_and_gravity(delta_time, do_thrust);
-      animate_blades(delta_time, do_thrust);
-      animate_prop(delta_time);
+      animate(delta_time, do_thrust);
     },
     // Draw the helicopter to the context
     draw : function(context) {

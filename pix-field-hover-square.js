@@ -3,12 +3,12 @@ if (!pix_field) { var pix_field = {}; }
 // A square area that progresses while hovered over
 pix_field.create_hover_square = function(x, y) {
   var constants = {
-    x : x,
-    y : y,
-    radius : 15,
-    delay : 3,
-    decay : 1,
-    min_inner_radius : 5, // percent of outer radius
+    x : x, // pixels
+    y : y, // pixels
+    radius : 15, // pixels
+    delay : 3, // seconds to complete
+    decay : 1, // seconds to lose all progress
+    min_inner_radius : 5, // pixels
     outer_square_color : '#050',
     inner_square_color : '#070'
   };
@@ -22,15 +22,12 @@ pix_field.create_hover_square = function(x, y) {
     decay_rate : 1 / constants.decay
   };
   var state = {
-    progress : 0
+    progress : 0 // percent
   };
   var contains = function(x, y) {
     return x > calculated.left && x < calculated.right && y > calculated.top && y < calculated.bottom;
   };
   return {
-    get_x : function() { return constants.x; },
-    get_y : function() { return constants.y; },
-    get_radius : function() { return constants.radius; },
     get_progress : function() { return state.progress; },
     // Update the progress dependent on if the hoverer is within
     step : function(delta_time, x, y) {
