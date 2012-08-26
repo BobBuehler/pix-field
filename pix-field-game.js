@@ -17,7 +17,7 @@ pix_field.create_game = function(width, height) {
     },
     // Draw the game state to the context
     draw : function(context) {
-      _progress_square.draw(context, _hover_square.get_x(), _hover_square.get_y(), _hover_square.get_radius(), _hover_square.get_progress());
+      _hover_square.draw(context);
       _helicopter.draw(context);
     }
   };

@@ -7,13 +7,17 @@ pix_field.create_hover_square = function(x, y) {
     y : y,
     radius : 15,
     delay : 3,
-    decay : 1
+    decay : 1,
+    min_inner_radius : 5, // percent of outer radius
+    outer_square_color : '#050',
+    inner_square_color : '#070'
   };
   var calculated = {
     left : constants.x - constants.radius,
     right : constants.x + constants.radius,
     top : constants.y - constants.radius,
     bottom : constants.y + constants.radius,
+    diameter : constants.radius * 2,
     progress_rate : 1 / constants.delay,
     decay_rate : 1 / constants.decay
   };
@@ -41,6 +45,14 @@ pix_field.create_hover_square = function(x, y) {
           state.progress = 0;
         }
       }
+    },
+    draw : function(context) {
+      context.fillStyle = constants.outer_square_color;
+      context.fillRect(calculated.left, calculated.top, calculated.diameter, calculated.diameter);
+      var inner_radius = pix_field_lib.percent_between(constants.min_inner_radius, constants.radius, state.progress);
+      var inner_diameter = inner_radius * 2;
+      context.fillStyle = constants.inner_square_color;
+      context.fillRect(constants.x - inner_radius, constants.y - inner_radius, inner_diameter, inner_diameter);
     }
   };
 };
