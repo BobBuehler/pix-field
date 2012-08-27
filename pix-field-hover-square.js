@@ -46,7 +46,7 @@ pix_field.create_hover_square = function(x, y) {
     draw : function(context) {
       context.fillStyle = constants.outer_square_color;
       context.fillRect(calculated.left, calculated.top, calculated.diameter, calculated.diameter);
-      var inner_radius = pix_field_lib.percent_between(constants.min_inner_radius, constants.radius, state.progress);
+      var inner_radius = pix_field.lib.percent_between(constants.min_inner_radius, constants.radius, state.progress);
       var inner_diameter = inner_radius * 2;
       context.fillStyle = constants.inner_square_color;
       context.fillRect(constants.x - inner_radius, constants.y - inner_radius, inner_diameter, inner_diameter);

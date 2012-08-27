@@ -1,4 +1,6 @@
-var pix_field_lib = {
+if (!pix_field) { var pix_field = {}; }
+
+pix_field.lib = {
   // Return the angle in the range (-PI,PI]
   bound_angle : function(angle) {
     while (angle > Math.PI) {
