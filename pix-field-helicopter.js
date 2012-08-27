@@ -63,7 +63,7 @@ pix_field.create_helicopter = function(x, y) {
       return;
     }
     state.angle += state.spin * delta_time;
-    state.angle = pix_field_lib.bound_angle(state.angle);
+    state.angle = pix_field.lib.bound_angle(state.angle);
   };
   var apply_thrust_and_gravity = function(delta_time, do_thrust) {
     if (do_thrust) {
@@ -77,11 +77,11 @@ pix_field.create_helicopter = function(x, y) {
   };
   var animate = function(delta_time, is_thrusting) {
       state.blade_angle += delta_time * (is_thrusting ? constants.blade_spin_thrust : constants.blade_spin_idle);
-      state.blade_angle = pix_field_lib.bound_angle(state.blade_angle);
+      state.blade_angle = pix_field.lib.bound_angle(state.blade_angle);
       pix.blades[0][0] = Math.sin(state.blade_angle) * constants.blade_radius;
       pix.blades[1][0] = Math.sin(-state.blade_angle) * constants.blade_radius;
       state.prop_angle += constants.prop_spin * delta_time;
-      state.prop_angle = pix_field_lib.bound_angle(state.prop_angle);
+      state.prop_angle = pix_field.lib.bound_angle(state.prop_angle);
   };
   return {
     get_x : function() { return state.x; },
@@ -96,17 +96,17 @@ pix_field.create_helicopter = function(x, y) {
     draw : function(context) {
       context.save();
       context.translate(state.x, state.y);
-      pix_field_lib.render_pix_array(context, pix.body, state.angle);
+      pix_field.lib.render_pix_array(context, pix.body, state.angle);
       context.save();
       context.rotate(state.angle);
       context.translate(-8,0);
       context.rotate(-state.angle);
-      pix_field_lib.render_pix_array(context, pix.prop, state.prop_angle);
+      pix_field.lib.render_pix_array(context, pix.prop, state.prop_angle);
       context.restore();
       context.rotate(state.angle);
       context.translate(0,-2.9);
       context.rotate(-state.angle);
-      pix_field_lib.render_pix_array(context, pix.blades, state.angle);
+      pix_field.lib.render_pix_array(context, pix.blades, state.angle);
       context.restore();
     },
     // Keep the helicopter within a boundary
