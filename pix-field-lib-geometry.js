@@ -122,8 +122,6 @@ pix_field.lib.find_y_intersect_of_segment = function(segment, y) {
 //   [x,y] is the position along the line segment that it intersects with the rectangle.
 //   false if the segment does not intersect.
 pix_field.lib.find_intersect_of_segment_and_rectangle = function(segment, rectangle) {
-  // If the line segmet starts within the square, it's awlays 0
-  // this avoids some edge cases later with tangent lines.
   if (pix_field.lib.rectangle_contains_point(rectangle, segment[0])) {
     return segment[0];
   }
