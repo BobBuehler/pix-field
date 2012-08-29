@@ -3,35 +3,25 @@ if (!pix_field) { var pix_field = {}; }
 // A square area that progresses while hovered over
 pix_field.create_hover_square = function(x, y) {
   var constants = {
-    x : x, // pixels
-    y : y, // pixels
-    radius : 15, // pixels
+    square : pix_field.create_square(x, y, 15),
     delay : 3, // seconds to complete
     decay : 1, // seconds to lose all progress
-    min_inner_radius : 5, // pixels
+    inner_radius : 0.3, // pixels
     outer_square_color : '#050',
     inner_square_color : '#070'
   };
   var calculated = {
-    left : constants.x - constants.radius,
-    right : constants.x + constants.radius,
-    top : constants.y - constants.radius,
-    bottom : constants.y + constants.radius,
-    diameter : constants.radius * 2,
     progress_rate : 1 / constants.delay,
     decay_rate : 1 / constants.decay
   };
   var state = {
     progress : 0 // percent
   };
-  var contains = function(x, y) {
-    return x > calculated.left && x < calculated.right && y > calculated.top && y < calculated.bottom;
-  };
   return {
     get_progress : function() { return state.progress; },
     // Update the progress dependent on if the hoverer is within
     step : function(delta_time, x, y) {
-      if (contains(x, y)) {
+      if (constants.square.contains([x, y])) {
         state.progress += delta_time * calculated.progress_rate;
         if (state.progress > 1) {
           state.progress = 1;
@@ -44,12 +34,13 @@ pix_field.create_hover_square = function(x, y) {
       }
     },
     draw : function(context) {
-      context.fillStyle = constants.outer_square_color;
-      context.fillRect(calculated.left, calculated.top, calculated.diameter, calculated.diameter);
-      var inner_radius = pix_field.lib.percent_between(constants.min_inner_radius, constants.radius, state.progress);
-      var inner_diameter = inner_radius * 2;
-      context.fillStyle = constants.inner_square_color;
-      context.fillRect(constants.x - inner_radius, constants.y - inner_radius, inner_diameter, inner_diameter);
+      context.save();
+      context.translate(x, y);
+      constants.square.draw_here(context, constants.outer_square_color);
+      var scale = constants.inner_radius +  state.progress * (1 - constants.inner_radius);
+      context.scale(scale, scale);
+      constants.square.draw_here(context, constants.inner_square_color);
+      context.restore();
     }
   };
 };
