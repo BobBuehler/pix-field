@@ -47,8 +47,7 @@ pix_field.create_helicopter = function(x, y) {
     angle : 0, // radians cw of east
     spin : 0, // radians / s
     blade_angle : 0, // radians
-    prop_angle : 0, // radians
-    gun_cooldown : 0 // seconds
+    prop_angle : 0 // radians
   };
   var apply_spin = function(delta_time, do_spin_left, do_spin_right) {
     if (do_spin_left && !do_spin_right) {
@@ -93,18 +92,8 @@ pix_field.create_helicopter = function(x, y) {
       apply_spin(delta_time, do_spin_left, do_spin_right);
       apply_thrust_and_gravity(delta_time, do_thrust);
     },
-    step_animate : function(delta_time, do_thrust) {
+    step_animation : function(delta_time, do_thrust) {
       animate(delta_time, do_thrust);
-    },
-    step_attack : function(delta_time, target_square) {
-      if (state.gun_cooldown < 0) {
-        state.gun_cooldown = 0;
-      }
-      state.gun_cooldown -= delta_time;
-      if (state.gun_cooldown <= 0) {
-        // find range of angle the helicopter has been in since the cooldown finished
-        // choose the earliest angle that a shot would have hit the target and fire
-      }
     },
     // Draw the helicopter to the context
     draw : function(context) {
@@ -124,21 +113,21 @@ pix_field.create_helicopter = function(x, y) {
       context.restore();
     },
     // Keep the helicopter within a boundary
-    bound : function(min_x, min_y, max_x, max_y) {
-      if (state.x < min_x) {
-        state.x = min_x;
+    bound : function(bounding_rectangle) {
+      if (state.x < bounding_rectangle[0]) {
+        state.x = bounding_rectangle[0];
         state.velocity.x = 0;
       }
-      if (state.y < min_y) {
-        state.y = min_y;
+      if (state.y < bounding_rectangle[1]) {
+        state.y = bounding_rectangle[1];
         state.velocity.y = 0;
       }
-      if (state.x > max_x) {
-        state.x = max_x;
+      if (state.x > bounding_rectangle[2]) {
+        state.x = bounding_rectangle[2];
         state.velocity.x = 0;
       }
-      if (state.y > max_y) {
-        state.y = max_y;
+      if (state.y > bounding_rectangle[3]) {
+        state.y = bounding_rectangle[3];
         state.velocity.y = 0;
       }
     }
