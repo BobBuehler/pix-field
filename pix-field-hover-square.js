@@ -21,7 +21,7 @@ pix_field.create_hover_square = function(x, y) {
     get_progress : function() { return state.progress; },
     // Update the progress dependent on if the hoverer is within
     step : function(delta_time, x, y) {
-      if (constants.square.contains(x, y)) {
+      if (constants.square.contains([x, y])) {
         state.progress += delta_time * calculated.progress_rate;
         if (state.progress > 1) {
           state.progress = 1;

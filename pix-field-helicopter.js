@@ -44,10 +44,11 @@ pix_field.create_helicopter = function(x, y) {
     x : x, // pixels
     y : y, // pixels
     velocity : { x : 0, y : 0 }, // pixels / s
-    angle : 0, // radians ccw of north
+    angle : 0, // radians cw of east
     spin : 0, // radians / s
     blade_angle : 0, // radians
-    prop_angle : 0 // radians
+    prop_angle : 0, // radians
+    gun_cooldown : 0 // seconds
   };
   var apply_spin = function(delta_time, do_spin_left, do_spin_right) {
     if (do_spin_left && !do_spin_right) {
@@ -86,11 +87,24 @@ pix_field.create_helicopter = function(x, y) {
   return {
     get_x : function() { return state.x; },
     get_y : function() { return state.y; },
+    get_angle : function() { return state.angle; },
     // Move the helicopter and animate its propellers
-    step : function(delta_time, do_thrust, do_spin_left, do_spin_right) {
+    step_fly : function(delta_time, do_thrust, do_spin_left, do_spin_right) {
       apply_spin(delta_time, do_spin_left, do_spin_right);
       apply_thrust_and_gravity(delta_time, do_thrust);
+    },
+    step_animate : function(delta_time, do_thrust) {
       animate(delta_time, do_thrust);
+    },
+    step_attack : function(delta_time, target_square) {
+      if (state.gun_cooldown < 0) {
+        state.gun_cooldown = 0;
+      }
+      state.gun_cooldown -= delta_time;
+      if (state.gun_cooldown <= 0) {
+        // find range of angle the helicopter has been in since the cooldown finished
+        // choose the earliest angle that a shot would have hit the target and fire
+      }
     },
     // Draw the helicopter to the context
     draw : function(context) {
