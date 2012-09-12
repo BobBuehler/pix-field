@@ -1,9 +1,9 @@
 if (!pix_field) { var pix_field = {}; }
 
 // A square area that progresses while hovered over
-pix_field.create_hover_square = function(x, y) {
+pix_field.create_hover_square = function(point) {
   return {
-    square : pix_field.create_square(x, y, 15),
+    square : pix_field.create_square(point[0], point[1], 15),
     outer_square_color : '#050',
     inner_square_color : '#070',
     inner_radius : 0.3, // percent of outer radius at 0 progress
@@ -25,7 +25,7 @@ pix_field.create_hover_square = function(x, y) {
     },
     draw : function(context) {
       context.save();
-      context.translate(x, y);
+      context.translate(this.square.x, this.square.y);
       this.square.draw_here(context, this.outer_square_color);
       var scale = this.inner_radius +  this.progress * (1 - this.inner_radius);
       context.scale(scale, scale);

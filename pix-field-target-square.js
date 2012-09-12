@@ -1,9 +1,9 @@
 if (!pix_field) { var pix_field = {}; }
 
-// A square area that progresses while hovered over
-pix_field.create_target_square = function(x, y) {
+// A square area that loses hp when hit
+pix_field.create_target_square = function(point) {
   return {
-    square: pix_field.create_square(x, y, 15),
+    square: pix_field.create_square(point[0], point[1], 15),
     max_hp: 20,
     hp: 20,
     outer_square_color: '#500',
@@ -16,7 +16,7 @@ pix_field.create_target_square = function(x, y) {
     },
     draw: function(context) {
       context.save();
-      context.translate(x, y);
+      context.translate(this.square.x, this.square.y);
       this.square.draw_here(context, this.outer_square_color);
       var scale = this.hp / this.max_hp;
       context.scale(scale, scale);

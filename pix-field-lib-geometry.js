@@ -28,16 +28,16 @@ pix_field.lib.arc_contains_angle = function(arc, angle) {
 };
 
 // rectangle = [left,top,right,bottom]
-// point = [x, y]
+// point = [x,y]
 pix_field.lib.rectangle_contains_point = function(rectangle, point) {
   return rectangle[0] <= point[0] && point[0] <= rectangle[2] && rectangle[1] <= point[1] && point[1] <= rectangle[3];
 };
 
 // rectangle = [left,top,right,bottom]
-// point = [x, y]
+// point = [x,y]
 // return = [start,end]
 //   end is clockwise of start
-pix_field.lib.project_rectectangle_to_arc_around_point = function(rectangle, point) {
+pix_field.lib.project_rectangle_to_arc_around_point = function(rectangle, point) {
   var x = point[0];
   var y = point[1];
   var left = rectangle[0];
@@ -143,7 +143,7 @@ pix_field.lib.find_intersect_of_segment_and_rectangle = function(segment, rectan
   } else if (x0 >= right && x1 < right) {
     intersect = pix_field.lib.find_x_intersect_of_segment(segment, right);
   } else if (y0 >= bottom && y1 < bottom) {
-    intersect = pix_field.lib.find_x_intersect_of_segment(segment, bottom);
+    intersect = pix_field.lib.find_y_intersect_of_segment(segment, bottom);
   }
   if (intersect !== false && pix_field.lib.rectangle_contains_point(rectangle, intersect)) {
     return intersect;
