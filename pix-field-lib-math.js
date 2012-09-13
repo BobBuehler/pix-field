@@ -18,3 +18,9 @@ pix_field.lib.at_percent_between = function(a, b, percent) {
 pix_field.lib.get_percent_between = function(a, b, value) {
   return (value - a) / (b - a);
 };
+
+// Returns a point at a uniform random location within the rectangle at 0,0 -> width,height.
+// return = [x,y]
+pix_field.lib.random_point = function(width, height) {
+  return [Math.random() * width, Math.random() * height];
+};

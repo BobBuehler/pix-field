@@ -1,21 +1,13 @@
 if (!pix_field) { var pix_field = {}; }
 
-// An a gun that owns its bullets
+// A gun that owns its bullets
 pix_field.create_gun = function() {
   return {
-    seconds_per_shot: .1,
+    seconds_per_shot: 0.1,
     bullet_speed: 100, // pixels / s
-    bullet_color: "#55b",
+    bullet_color: "#bb0",
     cooldown: 0,
     bullets: [],
-    fire: function(x, y, angle) {
-      this.bullets.push({
-        x: x,
-        y: y,
-        v_x : Math.cos(angle) * this.bullet_speed,
-        v_y : Math.sin(angle) * this.bullet_speed
-      });
-    },
     step_gun: function(delta_time, x, y, angle, target_square) {
       this.cooldown -= delta_time;
       if (this.cooldown < -delta_time) {
@@ -26,7 +18,12 @@ pix_field.create_gun = function() {
       if (target_square) {
         var arc = target_square.square.arc_project_around_point([x, y]);
         if (pix_field.lib.arc_contains_angle(arc, angle)) {
-          this.fire(x, y, angle);
+          this.bullets.push({
+            x: x,
+            y: y,
+            v_x : Math.cos(angle) * this.bullet_speed,
+            v_y : Math.sin(angle) * this.bullet_speed
+          });
           this.cooldown += this.seconds_per_shot;
         }
       }
