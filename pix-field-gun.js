@@ -17,28 +17,32 @@ pix_field.create_gun = function() {
       }
       if (target_square) {
         var arc = target_square.square.arc_project_around_point([x, y]);
-        if (pix_field.lib.arc_contains_angle(arc, angle)) {
-          this.bullets.push({
-            x: x,
-            y: y,
-            v_x : Math.cos(angle) * this.bullet_speed,
-            v_y : Math.sin(angle) * this.bullet_speed
-          });
-          this.cooldown += this.seconds_per_shot;
+        if (true || pix_field.lib.arc_contains_angle(arc, angle)) {
+          while (this.cooldown <= 0) {
+            this.bullets.push({
+              x: x,
+              y: y,
+              v_x: Math.cos(angle) * this.bullet_speed,
+              v_y: Math.sin(angle) * this.bullet_speed,
+              delay: this.cooldown + delta_time
+            });
+            this.cooldown += this.seconds_per_shot;
+          }
         }
       }
     },
     step_bullets: function(delta_time, target_square) {
       for (var i = this.bullets.length - 1; i >= 0; --i) {
         var bullet = this.bullets[i];
-        var end_x = bullet.x + bullet.v_x * delta_time;
-        var end_y = bullet.y + bullet.v_y * delta_time;
+        var end_x = bullet.x + bullet.v_x * (delta_time - bullet.delay);
+        var end_y = bullet.y + bullet.v_y * (delta_time - bullet.delay);
         if(target_square.square.intersects_segment([[bullet.x, bullet.y], [end_x, end_y]])) {
           target_square.hit();
           this.bullets.splice(i, 1);
         } else {
           bullet.x = end_x;
           bullet.y = end_y;
+          bullet.delay = 0;
         }
       }
     },
