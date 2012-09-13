@@ -8,7 +8,7 @@ pix_field.create_helicopter = function(x, y) {
     spin_max : 2 * Math.PI, // radians / s
     spin_delay : 0.2, //seconds
     blade_spin_idle : 1 * Math.PI, // radians / s
-    blade_spin_thrust : 6 * Math.PI, // radians / s
+    blade_spin_thrust : 8 * Math.PI, // radians / s
     blade_radius : 6, // pixels
     prop_spin : 2 * Math.PI // radians / s
   };

@@ -17,7 +17,7 @@ pix_field.create_gun = function() {
       }
       if (target_square) {
         var arc = target_square.square.arc_project_around_point([x, y]);
-        if (true || pix_field.lib.arc_contains_angle(arc, angle)) {
+        if (pix_field.lib.arc_contains_angle(arc, angle)) {
           while (this.cooldown <= 0) {
             this.bullets.push({
               x: x,
