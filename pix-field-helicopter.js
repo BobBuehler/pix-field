@@ -8,26 +8,6 @@ pix_field.create_helicopter = function(x, y) {
     top: '#aaa',
     tail: '#444'
   };
-  var pix = {
-    body: [
-      [-8,0,colors.body],
-      [-6,0,colors.body],
-      [-4,0,colors.body],
-      [-2,-1.5,colors.body],
-      [0,-1.9,colors.glass],
-      [0,-2.9,colors.body],
-      [2,-1.5,colors.glass],
-      [3,0.5,colors.glass],
-      [2,2.5,colors.glass],
-      [0,2.5,colors.body]
-    ],
-    tail: [
-      [0,-1,colors.tail],
-      [0,1,colors.tail]
-    ],
-    draw: function(context, x, y, angle) {
-    }
-  };
   return {
     pix: {
       body: [

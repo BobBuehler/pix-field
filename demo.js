@@ -1,5 +1,5 @@
 window.onload = function() {
-  var ZOOM = 5, SPACE = 32, LEFT = 37, RIGHT = 39;
+  var ZOOM = 5, PADDING = 20, SPACE = 32, LEFT = 37, RIGHT = 39;
 
   // capture the canvas, keyboard, and animation frame requester
   var canvas = document.getElementById('game-canvas');
@@ -19,9 +19,7 @@ window.onload = function() {
     function(callback) {
       window.setTimeout(callback, 1000 / 60);
     };
-
-  // Create a game and put it in a loop
-  var game = pix_field.create_game(canvas.width / ZOOM, canvas.height / ZOOM);
+  var game = pix_field.create_game((canvas.width - PADDING * 2) / ZOOM, (canvas.height - PADDING * 2) / ZOOM);
   var last_time = new Date().getTime();
   (function iterate() {
     request_frame(function() {
@@ -34,6 +32,7 @@ window.onload = function() {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.fillStyle = 'black';
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    context.translate(PADDING, PADDING);
     context.scale(ZOOM, ZOOM);
     game.draw(context);
   })();

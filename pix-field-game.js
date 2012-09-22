@@ -10,22 +10,25 @@ pix_field.create_game = function(width, height) {
     gun: pix_field.create_gun(),
     step : function(delta_time, space_bar, left, right) {
       this.helicopter.step_fly(delta_time, space_bar, left, right);
-      this.helicopter.bound(this.boundary.array);
-      this.helicopter.step_animation(delta_time, space_bar, left, right);
-      if (this.hover_square.square.contains([this.helicopter.x, this.helicopter.y])) {
-        this.hover_square.step(delta_time, true);
-        this.gun.step_gun(delta_time, this.helicopter.x, this.helicopter.y, this.helicopter.angle, this.target_square);
-        if (this.hover_square.progress === 1) {
-          this.hover_square = pix_field.create_hover_square(pix_field.lib.random_point(width, height));
-        }
-      } else {
-        this.hover_square.step(delta_time, false);
-        this.gun.step_gun(delta_time, this.helicopter.x, this.helicopter.y, this.helicopter.angle);
+      this.helicopter.bound(this.boundary);
+      this.helicopter.step_animation(delta_time, space_bar);
+      var in_hover = this.hover_square.square.contains([this.helicopter.x, this.helicopter.y]);
+      this.hover_square.step(delta_time, in_hover);
+      if (this.hover_square.progress === 1) {
+        this.hover_square = pix_field.create_hover_square(pix_field.lib.random_point(width, height));
       }
+      if (!this.hover_square.destination) {
+        this.hover_square.set_destination(pix_field.lib.random_point(width, height));
+      }
+      this.gun.step_gun(delta_time, in_hover, this.helicopter.x, this.helicopter.y, this.helicopter.angle);
       this.gun.step_bullets(delta_time, this.target_square);
-      this.gun.bound_bullets(this.boundary.array);
-      if(this.target_square.hp === 0) {
+      this.gun.bound_bullets(this.boundary);
+      this.target_square.step(delta_time, true);
+      if(this.target_square.hp <= 0) {
         this.target_square = pix_field.create_target_square(pix_field.lib.random_point(width, height));
+      }
+      if (!this.target_square.destination) {
+        this.target_square.set_destination(pix_field.lib.random_point(width, height));
       }
     },
     draw : function(context) {
