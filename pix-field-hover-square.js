@@ -4,15 +4,15 @@ if (!pix_field) { var pix_field = {}; }
 pix_field.create_hover_square = function(point) {
   return {
     square : pix_field.create_square(point, 15),
+    move_rate : 10, // pixels / s
+    destination: false, // [x,y] | false
+    velocity: [0, 0], // [dx, dy]
     outer_square_color : '#050',
     inner_square_color : '#070',
     inner_radius : 0.3, // percent of outer radius at 0 progress
     progress_rate : 0.33, // progress / s
     decay_rate : 1, // progress lost / s
-    move_rate : 10, // pixels / s
     progress : 0, // percent
-    destination: false, // [x,y] | false
-    velocity: [0, 0], // [dx, dy]
     set_destination: function(point) {
       this.destination = point;
       if (this.destination) {

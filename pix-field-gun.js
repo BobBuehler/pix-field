@@ -3,7 +3,7 @@ if (!pix_field) { var pix_field = {}; }
 // A gun that owns its bullets
 pix_field.create_gun = function() {
   return {
-    seconds_per_shot: 0.1,
+    seconds_per_shot: 0.15,
     bullet_speed: 100, // pixels / s
     bullet_color: "#bb0",
     cooldown: 0,

@@ -23,8 +23,12 @@ pix_field.create_game = function(width, height) {
       this.gun.step_gun(delta_time, in_hover, this.helicopter.x, this.helicopter.y, this.helicopter.angle);
       this.gun.step_bullets(delta_time, this.target_square);
       this.gun.bound_bullets(this.boundary);
-      if(this.target_square.hp === 0) {
+      this.target_square.step(delta_time, true);
+      if(this.target_square.hp <= 0) {
         this.target_square = pix_field.create_target_square(pix_field.lib.random_point(width, height));
+      }
+      if (!this.target_square.destination) {
+        this.target_square.set_destination(pix_field.lib.random_point(width, height));
       }
     },
     draw : function(context) {
