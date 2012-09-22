@@ -17,8 +17,8 @@ pix_field.create_game = function(width, height) {
       if (this.hover_square.progress === 1) {
         this.hover_square = pix_field.create_hover_square(pix_field.lib.random_point(width, height));
       }
-      if (!this.hover_square.destination) {
-        this.hover_square.set_destination(pix_field.lib.random_point(width, height));
+      if (!this.hover_square.mover.destination) {
+        this.hover_square.mover.set_destination(pix_field.lib.random_point(width, height));
       }
       this.gun.step_gun(delta_time, in_hover, this.helicopter.x, this.helicopter.y, this.helicopter.angle);
       this.gun.step_bullets(delta_time, this.target_square);
@@ -27,8 +27,8 @@ pix_field.create_game = function(width, height) {
       if(this.target_square.hp <= 0) {
         this.target_square = pix_field.create_target_square(pix_field.lib.random_point(width, height));
       }
-      if (!this.target_square.destination) {
-        this.target_square.set_destination(pix_field.lib.random_point(width, height));
+      if (!this.target_square.mover.destination) {
+        this.target_square.mover.set_destination(pix_field.lib.random_point(width, height));
       }
     },
     draw : function(context) {
