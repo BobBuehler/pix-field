@@ -1,7 +1,10 @@
 if (!pix_field) { var pix_field = {}; }
 
 // A square area that loses hp when hit
-pix_field.create_target_square = function(point) {
+pix_field.create_target_square = function(point, bouding_rect, do_move) {
+  if (!point) {
+    point = pix_field.lib.random_point_in_rect(bounding_rect);
+  }
   return {
     square: pix_field.create_square(point[0], point[1], 15),
     max_hp: 20,

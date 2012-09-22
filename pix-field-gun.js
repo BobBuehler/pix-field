@@ -8,27 +8,17 @@ pix_field.create_gun = function() {
     bullet_color: "#bb0",
     cooldown: 0,
     bullets: [],
-    step_gun: function(delta_time, x, y, angle, target_square) {
-      this.cooldown -= delta_time;
-      if (this.cooldown < -delta_time) {
-        this.cooldown = -delta_time;
-      } else if (this.cooldown > 0) {
-        return;
-      }
-      if (target_square) {
-        var arc = target_square.square.arc_project_around_point([x, y]);
-        if (pix_field.lib.arc_contains_angle(arc, angle)) {
-          while (this.cooldown <= 0) {
-            this.bullets.push({
-              x: x,
-              y: y,
-              v_x: Math.cos(angle) * this.bullet_speed,
-              v_y: Math.sin(angle) * this.bullet_speed,
-              delay: this.cooldown + delta_time
-            });
-            this.cooldown += this.seconds_per_shot;
-          }
-        }
+    step_gun: function(delta_time, do_fire, x, y, angle) {
+      this.cooldown = Math.max(this.cooldown - delta_time, -delta_time);
+      while (do_fire && this.cooldown <= 0) {
+        this.bullets.push({
+          x: x,
+          y: y,
+          v_x: Math.cos(angle) * this.bullet_speed,
+          v_y: Math.sin(angle) * this.bullet_speed,
+          delay: this.cooldown + delta_time
+        });
+        this.cooldown += this.seconds_per_shot;
       }
     },
     step_bullets: function(delta_time, target_square) {

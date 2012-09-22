@@ -3,6 +3,10 @@ if (!pix_field) { var pix_field = {}; }
 // A drawable rectangle that stores many calculated properties.
 pix_field.create_rectangle = function(left, top, right, bottom) {
   return {
+    0: left,
+    1: top,
+    2: right,
+    3: bottom,
     left: left,
     top: top,
     right: right,
@@ -12,13 +16,13 @@ pix_field.create_rectangle = function(left, top, right, bottom) {
     height: bottom - top,
     array: [left, top, right, bottom],
     contains: function(point) {
-      return pix_field.lib.rectangle_contains_point(this.array, point);
+      return pix_field.lib.rectangle_contains_point(this, point);
     },
     intersects_segment: function(segment) {
-      return pix_field.lib.find_intersect_of_segment_and_rectangle(segment, this.array) !== false;
+      return pix_field.lib.find_intersect_of_segment_and_rectangle(segment, this) !== false;
     },
     arc_project_around_point: function(point) {
-      return pix_field.lib.project_rectangle_to_arc_around_point(this.array, point);
+      return pix_field.lib.project_rectangle_to_arc_around_point(this, point);
     },
     draw : function(context, fillStyle) {
       context.fillStyle = fillStyle;
