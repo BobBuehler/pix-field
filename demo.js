@@ -1,5 +1,5 @@
 window.onload = function() {
-  var ZOOM = 5, PADDING = 20, SPACE = 32, LEFT = 37, RIGHT = 39;
+  var ZOOM = 5, PADDING = 30, SPACE = 32, LEFT = 37, RIGHT = 39;
 
   // capture the canvas, keyboard, and animation frame requester
   var canvas = document.getElementById('game-canvas');
@@ -30,10 +30,12 @@ window.onload = function() {
     last_time = time;
     game.step(delta_time, keyboard[SPACE], keyboard[LEFT], keyboard[RIGHT]);
     context.setTransform(1, 0, 0, 1, 0, 0);
-    context.fillStyle = 'black';
+    context.fillStyle = '#222';
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
     context.translate(PADDING, PADDING);
     context.scale(ZOOM, ZOOM);
+    context.fillStyle = 'black';
+    context.fillRect(0, 0, game.boundary.width, game.boundary.height);
     game.draw(context);
   })();
 };
