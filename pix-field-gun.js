@@ -38,22 +38,28 @@ pix_field.create_gun = function() {
     step_bullets: function(delta_time, target_square) {
       for (var i = this.bullets.length - 1; i >= 0; --i) {
         var bullet = this.bullets[i];
-        var end_x = bullet.x + bullet.v_x * (delta_time - bullet.delay);
-        var end_y = bullet.y + bullet.v_y * (delta_time - bullet.delay);
-        if(target_square.square.intersects_segment([[bullet.x, bullet.y], [end_x, end_y]])) {
-          target_square.hit();
-          this.bullets.splice(i, 1);
+        var live_time = delta_time - bullet.delay;
+        if (live_time > 0) {
+          var end_x = bullet.x + bullet.v_x * live_time;
+          var end_y = bullet.y + bullet.v_y * live_time;
+          if(target_square.square.intersects_segment([[bullet.x, bullet.y], [end_x, end_y]])) {
+            target_square.hit();
+            this.bullets.splice(i, 1);
+          } else {
+            bullet.x = end_x;
+            bullet.y = end_y;
+            bullet.delay = 0;
+            bullet.alive = true;
+          }
         } else {
-          bullet.x = end_x;
-          bullet.y = end_y;
-          bullet.delay = 0;
+          bullet.delay -= delta_time;
         }
       }
     },
     bound_bullets: function(bounding_rect) {
       for (var i = this.bullets.length - 1; i >= 0; --i) {
         var bullet = this.bullets[i];
-        if (!pix_field.lib.rectangle_contains_point(bounding_rect, [bullet.x, bullet.y])) {
+        if (bullet.alive && !pix_field.lib.rectangle_contains_point(bounding_rect, [bullet.x, bullet.y])) {
           this.bullets.splice(i, 1);
         }
       }
@@ -62,7 +68,9 @@ pix_field.create_gun = function() {
       context.fillStyle = this.bullet_color;
       for (var i = this.bullets.length - 1; i >= 0; --i) {
         var bullet = this.bullets[i];
-        context.fillRect(bullet.x - 0.5, bullet.y - 0.5, 1, 1);
+        if (bullet.alive) {
+          context.fillRect(bullet.x - 0.5, bullet.y - 0.5, 1, 1);
+        }
       }
     }
   };
