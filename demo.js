@@ -5,6 +5,9 @@ window.onload = function() {
   var canvas = document.getElementById('game-canvas');
   var context = canvas.getContext('2d');
   var scoreboard = document.getElementById('scoreboard');
+  var plusone = document.getElementById('socializer');
+  plusone.mid_x = plusone.clientWidth / 2;
+  plusone.mid_y = plusone.clientHeight / 2;
   var keyboard = {};
   document.onkeydown = function(ev) {
     keyboard[ev.which] = true;
@@ -39,5 +42,12 @@ window.onload = function() {
     context.fillRect(0, 0, game.boundary.width, game.boundary.height);
     game.draw(context);
     scoreboard.innerHTML = game.scoreboard.text;
+    plusone.style.left = (PADDING + game.helicopter.x * ZOOM - plusone.mid_x) + "px";
+    plusone.style.top = (PADDING + game.helicopter.y * ZOOM - plusone.mid_y) + "px";
+    var transform = 'scale(1.8,1.8) rotate(' + game.helicopter.angle + 'rad)';
+    plusone.style.transform = transform;
+    plusone.style['-webkit-transform'] = transform;
+    plusone.style['-moz-transform'] = transform;
+    plusone.style['-o-transform'] = transform;
   })();
 };
