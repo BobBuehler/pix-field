@@ -3,7 +3,7 @@ if (!pix_field) { var pix_field = {}; }
 // A wind force that changes over time.
 pix_field.create_wind = function() {
   return {
-    min_magnitude: 30,
+    min_magnitude: 50,
     max_magnitude: 100,
     max_duration: 5,
     decay_rate: 0.9, // percent velocity lost per second

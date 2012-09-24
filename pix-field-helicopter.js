@@ -30,6 +30,7 @@ pix_field.create_helicopter = function(x, y) {
     y: y, // pixels
     velocity: {x: 0, y: 0}, // pixels / s
     gravity: 60, // pixels / s / s
+    wind_force: 0.5, // percent of 100 force winds to apply
     thrust: 120, // pixels / s / s
     angle: 0, // radians cw of east
     spin: 0, // radians / s
@@ -59,8 +60,8 @@ pix_field.create_helicopter = function(x, y) {
         this.velocity.x += this.thrust * Math.cos(thrust_angle) * delta_time;
         this.velocity.y += this.thrust * Math.sin(thrust_angle) * delta_time;
       }
-      this.velocity.x += wind_velocity[0] * delta_time;
-      this.velocity.y += wind_velocity[1] * delta_time;
+      this.velocity.x += wind_velocity[0] * this.wind_force * delta_time;
+      this.velocity.y += wind_velocity[1] * this.wind_force * delta_time;
       this.velocity.y += this.gravity * delta_time;
       this.x += this.velocity.x * delta_time;
       this.y += this.velocity.y * delta_time;
