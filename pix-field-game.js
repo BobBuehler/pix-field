@@ -14,7 +14,7 @@ pix_field.create_game = function(width, height) {
     gun: pix_field.create_gun(),
     scoreboard: pix_field.create_scoreboard(),
     step : function(delta_time, space_bar, left, right) {
-      // this.wind.step(delta_time);
+      this.wind.step(delta_time);
       this.dust.step(delta_time, this.wind.velocity);
       this.helicopter.step_fly(delta_time, this.wind.velocity, space_bar, left, right);
       this.helicopter.bound(this.boundary);
