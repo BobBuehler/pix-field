@@ -12,8 +12,9 @@ pix_field.create_game = function(width, height) {
     hover_square: pix_field.create_hover_square([width *0.3, height * 0.6]),
     target_square: pix_field.create_target_square([width * 0.7, height * 0.6]),
     gun: pix_field.create_gun(),
+    scoreboard: pix_field.create_scoreboard(),
     step : function(delta_time, space_bar, left, right) {
-      this.wind.step(delta_time);
+      // this.wind.step(delta_time);
       this.dust.step(delta_time, this.wind.velocity);
       this.helicopter.step_fly(delta_time, this.wind.velocity, space_bar, left, right);
       this.helicopter.bound(this.boundary);
@@ -32,6 +33,7 @@ pix_field.create_game = function(width, height) {
       this.gun.bound_bullets(this.boundary);
       this.target_square.step(delta_time, true);
       if(this.target_square.hp <= 0) {
+        this.scoreboard.add_kill();
         this.target_square = pix_field.create_target_square(pix_field.lib.random_point(width, height));
       }
       if (!this.target_square.mover.destination) {

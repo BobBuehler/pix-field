@@ -4,6 +4,7 @@ window.onload = function() {
   // capture the canvas, keyboard, and animation frame requester
   var canvas = document.getElementById('game-canvas');
   var context = canvas.getContext('2d');
+  var scoreboard = document.getElementById('scoreboard');
   var keyboard = {};
   document.onkeydown = function(ev) {
     keyboard[ev.which] = true;
@@ -37,5 +38,6 @@ window.onload = function() {
     context.fillStyle = 'black';
     context.fillRect(0, 0, game.boundary.width, game.boundary.height);
     game.draw(context);
+    scoreboard.innerHTML = game.scoreboard.text;
   })();
 };
