@@ -41,7 +41,7 @@ pix_field.create_helicopter = function(x, y) {
     top_spin_thrust: 6 * Math.PI, // radians / s
     tail_angle: 0,
     tail_spin: 2 * Math.PI, // radians / s
-    step_fly: function(delta_time, do_thrust, do_spin_left, do_spin_right) {
+    step_fly: function(delta_time, wind_velocity, do_thrust, do_spin_left, do_spin_right) {
       if (do_spin_left && !do_spin_right) {
         this.spin = Math.min(this.spin, 0);
         this.spin -= this.spin_max * (delta_time / this.spin_delay);
@@ -59,6 +59,8 @@ pix_field.create_helicopter = function(x, y) {
         this.velocity.x += this.thrust * Math.cos(thrust_angle) * delta_time;
         this.velocity.y += this.thrust * Math.sin(thrust_angle) * delta_time;
       }
+      this.velocity.x += wind_velocity[0] * delta_time;
+      this.velocity.y += wind_velocity[1] * delta_time;
       this.velocity.y += this.gravity * delta_time;
       this.x += this.velocity.x * delta_time;
       this.y += this.velocity.y * delta_time;
