@@ -21,6 +21,7 @@ pix_field.create_game = function(width, height) {
       var in_hover = this.hover_square.square.contains([this.helicopter.x, this.helicopter.y]);
       this.hover_square.step(delta_time, in_hover);
       if (this.hover_square.progress === 1) {
+        this.gun.create_starburst(this.hover_square.square.center[0], this.hover_square.square.center[1], 200);
         this.hover_square = pix_field.create_hover_square(pix_field.lib.random_point_in_rect(destination_boundary));
       }
       if (!this.hover_square.mover.destination) {
