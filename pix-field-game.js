@@ -13,10 +13,13 @@ pix_field.create_game = function(width, height) {
     target_square: pix_field.create_target_square([width * 0.7, height * 0.6]),
     gun: pix_field.create_gun(),
     scoreboard: pix_field.create_scoreboard(),
-    step : function(delta_time, space_bar, left, right) {
-      this.wind.step(delta_time);
-      this.dust.step(delta_time, this.wind.velocity);
-      this.helicopter.step_fly(delta_time, this.wind.velocity, space_bar, left, right);
+    step : function(delta_time, space_bar, left, right, do_wind, do_regen) {
+      this.helicopter.step_fly(delta_time, space_bar, left, right);
+      if (do_wind) {
+        this.wind.step(delta_time);
+        this.dust.step(delta_time, this.wind.velocity);
+        this.helicopter.step_wind(delta_time, this.wind.velocity);
+      }
       this.helicopter.bound(this.boundary);
       this.helicopter.step_animation(delta_time, space_bar);
       var in_hover = this.hover_square.square.contains([this.helicopter.x, this.helicopter.y]);
@@ -31,7 +34,7 @@ pix_field.create_game = function(width, height) {
       this.gun.step_gun(delta_time, in_hover, this.helicopter.x, this.helicopter.y, this.helicopter.angle);
       this.gun.step_bullets(delta_time, this.target_square);
       this.gun.bound_bullets(this.boundary);
-      this.target_square.step(delta_time, true);
+      this.target_square.step(delta_time, do_regen);
       if(this.target_square.hp <= 0) {
         this.scoreboard.add_kill();
         this.target_square = pix_field.create_target_square(pix_field.lib.random_point(width, height));

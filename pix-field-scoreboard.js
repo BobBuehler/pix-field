@@ -6,20 +6,23 @@ pix_field.create_scoreboard = function() {
     "targets",
     "boxes",
     "squares",
-    "objectives",
-    "thingies"
+    "thingies",
+    "quadrilaterals",
+    "parallelograms",
+    "red doohikies"
   ];
   var action_descriptors = [
-    "completed",
     "shot",
     "killed",
     "sent to hell",
     "removed",
-    "done"
+    "exploded",
+    "imploded",
+    "kicked the bucket"
   ];
   return {
     value: 0,
-    text: "",
+    text: "Make me proud!",
     add_kill: function() {
       this.value += 1;
       if (this.value === 1) {

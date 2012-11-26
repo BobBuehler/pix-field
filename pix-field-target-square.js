@@ -15,7 +15,7 @@ pix_field.create_target_square = function(point) {
       this.hp--;
     },
     step: function(delta_time, do_regen) {
-      if (do_regen === true) {
+      if (do_regen) {
         this.hp = Math.min(this.hp + delta_time * this.regen_rate, this.max_hp);
       }
       this.mover.step(delta_time);
