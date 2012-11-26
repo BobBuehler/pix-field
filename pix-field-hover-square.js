@@ -1,18 +1,18 @@
 if (!pix_field) { var pix_field = {}; }
 
 // A square area that progresses while hovered over
-pix_field.create_hover_square = function(point) {
+pix_field.create_hover_square = function(point, new_destination_callback) {
   var square = pix_field.create_square(point, 15);
   return {
     square : square,
-    mover: pix_field.create_rectangle_mover(square),
+    mover: pix_field.create_rectangle_mover(square, new_destination_callback),
     outer_square_color : '#050',
     inner_square_color : '#070',
     inner_radius : 0.3, // percent of outer radius at 0 progress
     progress_rate : 0.33, // progress / s
     decay_rate : 1, // progress lost / s
     progress : 0, // percent
-    step : function(delta_time, do_progress) {
+    step : function(delta_time, do_progress, do_mover) {
       if (do_progress) {
         this.progress += delta_time * this.progress_rate;
         if (this.progress > 1) {
@@ -24,7 +24,9 @@ pix_field.create_hover_square = function(point) {
           this.progress = 0;
         }
       }
-      this.mover.step(delta_time);
+      if (do_mover) {
+        this.mover.step(delta_time);
+      }
     },
     draw : function(context) {
       context.save();

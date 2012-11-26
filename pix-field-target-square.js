@@ -1,11 +1,11 @@
 if (!pix_field) { var pix_field = {}; }
 
 // A square area that loses hp when hit
-pix_field.create_target_square = function(point) {
+pix_field.create_target_square = function(point, new_destination_callback) {
   var square = pix_field.create_square(point, 15);
   return {
     square: square,
-    mover: pix_field.create_rectangle_mover(square),
+    mover: pix_field.create_rectangle_mover(square, new_destination_callback),
     regen_rate: 1, // hp / second
     max_hp: 10,
     hp: 10,
@@ -14,11 +14,13 @@ pix_field.create_target_square = function(point) {
     hit: function() {
       this.hp--;
     },
-    step: function(delta_time, do_regen) {
+    step: function(delta_time, do_regen, do_move) {
       if (do_regen) {
         this.hp = Math.min(this.hp + delta_time * this.regen_rate, this.max_hp);
       }
-      this.mover.step(delta_time);
+      if (do_move) {
+        this.mover.step(delta_time);
+      }
     },
     draw: function(context) {
       context.save();

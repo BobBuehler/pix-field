@@ -5,8 +5,9 @@ window.onload = function() {
   var canvas = document.getElementById('game-canvas');
   var context = canvas.getContext('2d');
   var scoreboard = document.getElementById('scoreboard');
-  var do_wind = document.getElementById('do_wind');
   var do_regen = document.getElementById('do_regen');
+  var do_wind = document.getElementById('do_wind');
+  var do_move_squares = document.getElementById('do_move_squares');
   var keyboard = {};
   document.onkeydown = function(ev) {
     keyboard[ev.which] = true;
@@ -31,7 +32,7 @@ window.onload = function() {
     var time = new Date().getTime();
     var delta_time = (time - last_time) / 1000;
     last_time = time;
-    game.step(delta_time, keyboard[SPACE], keyboard[LEFT], keyboard[RIGHT], do_wind.checked, do_regen.checked);
+    game.step(delta_time, keyboard[SPACE], keyboard[LEFT], keyboard[RIGHT], do_regen.checked, do_wind.checked, do_move_squares.checked);
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.fillStyle = '#222';
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
