@@ -11,7 +11,7 @@ pix_field.create_target_square = function(point, new_destination_callback) {
     hp: 10,
     outer_square_color: '#500',
     inner_square_color: '#700',
-    hit: function() {
+    hit: function(x, y, angle) {
       this.hp--;
     },
     step: function(delta_time, do_regen, do_move) {

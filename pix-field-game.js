@@ -7,7 +7,7 @@ pix_field.create_game = function(width, height) {
   var random_destination_point = function() {
     return pix_field.lib.random_point_in_rect(destination_boundary);
   };
-  return {
+  var game = {
     boundary: boundary,
     helicopter: pix_field.create_helicopter(width / 2, height / 2),
     dust: pix_field.create_dust_field(boundary),
@@ -16,6 +16,9 @@ pix_field.create_game = function(width, height) {
     target_square: pix_field.create_target_square([width * 0.7, height * 0.6], random_destination_point),
     gun: pix_field.create_gun(),
     scoreboard: pix_field.create_scoreboard(),
+    detect_hit : function(x, y) {
+      return game.target_square.square.contains([x, y]);
+    },
     step : function(delta_time, space_bar, left, right, do_regen, do_wind, do_move_squares) {
       this.helicopter.step_fly(delta_time, space_bar, left, right);
       if (do_wind) {
@@ -32,7 +35,10 @@ pix_field.create_game = function(width, height) {
         this.hover_square = pix_field.create_hover_square(random_destination_point(), random_destination_point);
       }
       this.gun.step_gun(delta_time, in_hover, this.helicopter.x, this.helicopter.y, this.helicopter.angle);
-      this.gun.step_bullets(delta_time, this.target_square);
+      var hits = this.gun.step_bullets(delta_time, this.detect_hit);
+      hits.forEach(function(hit) {
+        this.target_square.hit(hit.x, hit.y, hit.angle);
+      }, this);
       this.gun.bound_bullets(this.boundary);
       this.target_square.step(delta_time, do_regen, do_move_squares);
       if(this.target_square.hp <= 0) {
@@ -48,4 +54,5 @@ pix_field.create_game = function(width, height) {
       this.gun.draw_bullets(context);
     }
   };
+  return game;
 };
