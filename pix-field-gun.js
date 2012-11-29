@@ -28,6 +28,7 @@ pix_field.create_gun = function() {
         this.bullets.push({
           x: x,
           y: y,
+          angle: angle,
           v_x: Math.cos(angle) * this.bullet_speed,
           v_y: Math.sin(angle) * this.bullet_speed,
           delay: this.cooldown + delta_time
@@ -35,19 +36,22 @@ pix_field.create_gun = function() {
         this.cooldown += this.seconds_per_shot;
       }
     },
-    step_bullets: function(delta_time, target_square) {
+    step_bullets: function(delta_time, detect_hit) {
+      var hits = [];
       for (var i = this.bullets.length - 1; i >= 0; --i) {
         var bullet = this.bullets[i];
-        var live_time = delta_time - bullet.delay;
+        var live_time = delta_time - bullet.delay; // how long this frame was the bullet alive
         if (live_time > 0) {
-          var end_x = bullet.x + bullet.v_x * live_time;
-          var end_y = bullet.y + bullet.v_y * live_time;
-          if(target_square.square.intersects_segment([[bullet.x, bullet.y], [end_x, end_y]])) {
-            target_square.hit();
+          bullet.x += bullet.v_x * live_time;
+          bullet.y += bullet.v_y * live_time;
+          if(detect_hit(bullet.x, bullet.y)) {
+            hits.push({
+              x: bullet.x,
+              y: bullet.y,
+              angle: bullet.angle
+            });
             this.bullets.splice(i, 1);
           } else {
-            bullet.x = end_x;
-            bullet.y = end_y;
             bullet.delay = 0;
             bullet.alive = true;
           }
@@ -55,6 +59,7 @@ pix_field.create_gun = function() {
           bullet.delay -= delta_time;
         }
       }
+      return hits;
     },
     bound_bullets: function(bounding_rect) {
       for (var i = this.bullets.length - 1; i >= 0; --i) {
