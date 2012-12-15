@@ -1,3 +1,0 @@
-touch screen controls
-target square reacts to bullets
-difficulty settings
