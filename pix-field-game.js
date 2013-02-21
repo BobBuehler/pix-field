@@ -19,7 +19,7 @@ pix_field.create_game = function(width, height) {
     detect_hit : function(x, y) {
       return game.target_square.square.contains([x, y]);
     },
-    step : function(delta_time, space_bar, left, right, do_regen, do_wind, do_move_squares) {
+    step : function(delta_time, space_bar, left, right, do_wind, do_move_squares, do_regen, do_starburst) {
       this.helicopter.step_fly(delta_time, space_bar, left, right);
       if (do_wind) {
         this.wind.step(delta_time);
@@ -31,7 +31,9 @@ pix_field.create_game = function(width, height) {
       var in_hover = this.hover_square.square.contains([this.helicopter.x, this.helicopter.y]);
       this.hover_square.step(delta_time, in_hover, do_move_squares);
       if (this.hover_square.progress === 1) {
-        this.gun.create_starburst(this.hover_square.square.center[0], this.hover_square.square.center[1], 200);
+        if (do_starburst) {
+          this.gun.create_starburst(this.hover_square.square.center[0], this.hover_square.square.center[1], 200);
+        }
         this.hover_square = pix_field.create_hover_square(random_destination_point(), random_destination_point);
       }
       this.gun.step_gun(delta_time, in_hover, this.helicopter.x, this.helicopter.y, this.helicopter.angle);
