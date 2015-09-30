@@ -1,7 +1,7 @@
 window.onload = function() {
   var ZOOM = 5, PADDING = 30, ENTER = 13, SPACE = 32, LEFT = 37, UP = 38, RIGHT = 39;
 
-  // capture the canvas, keyboard, and animation frame requester
+  // identifiy the elements
   var canvas = document.getElementById('game-canvas');
   var context = canvas.getContext('2d');
   var scoreboard = document.getElementById('scoreboard');
@@ -9,13 +9,20 @@ window.onload = function() {
   var do_move_squares = document.getElementById('do_move_squares');
   var do_regen = document.getElementById('do_regen');
   var do_starburst = document.getElementById('do_starburst');
+  
+  // setup keyboard hooks
   var keyboard = {};
+  var preventDefault = [ENTER, SPACE, LEFT, UP, RIGHT].reduce(function(c, key) {c[key] = true; return c;}, {});
   document.onkeydown = function(ev) {
     keyboard[ev.which] = true;
+    if (preventDefault[ev.which]) ev.preventDefault();
   };
   document.onkeyup = function(ev) {
     keyboard[ev.which] = false;
+    if (preventDefault[ev.which]) ev.preventDefault();
   };
+  
+  // resolve animation frame callback
   var request_frame = window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
@@ -24,6 +31,8 @@ window.onload = function() {
     function(callback) {
       window.setTimeout(callback, 1000 / 60);
     };
+
+  // launch the game
   var game = pix_field.create_game((canvas.width - PADDING * 2) / ZOOM, (canvas.height - PADDING * 2) / ZOOM);
   var last_time = new Date().getTime();
   (function iterate() {
